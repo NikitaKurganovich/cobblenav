@@ -1,13 +1,14 @@
+buildscript {
+    dependencies {
+        classpath libs.architectury.plugin
+    }
+}
+
 plugins {
     alias(libs.plugins.loom) apply false
-    alias(libs.plugins.architectury) apply false
     alias(libs.plugins.shadow) apply false
     alias(libs.plugins.kotlin.jvm) apply false
 }
-
-//architectury {
-//    minecraft = minecraft_version
-//}
 
 allprojects {
     group = maven_group
@@ -18,7 +19,11 @@ subprojects {
     apply plugin : 'maven-publish'
     apply plugin : libs.plugins.kotlin.jvm.get().pluginId
     apply plugin : libs.plugins.loom.get().pluginId
-    apply plugin : libs.plugins.architectury.get().pluginId
+    apply plugin: 'architectury-plugin'
+
+    architectury {
+        minecraft = libs.versions.minecraft.get()
+    }
 
     base {
         // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.

@@ -33,9 +33,9 @@ cobblemon-counter-neoforge = { module = "maven.modrinth:cobblemon-counter", vers
 neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
 kotlin-for-forge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinforforge" }
+architectury-plugin = { module = "architectury-plugin:architectury-plugin.gradle.plugin", version.ref = "architectury" }
 
 [plugins]
 loom = { id = "dev.architectury.loom", version.ref = "loom" }
-architectury = { id = "architectury-plugin", version.ref = "architectury" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
