@@ -1,13 +1,13 @@
 plugins {
-    id 'dev.architectury.loom' version '1.9-SNAPSHOT' apply false
-    id 'architectury-plugin' version '3.4-SNAPSHOT'
-    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
-    id 'org.jetbrains.kotlin.jvm' version '2.1.0'
+    alias(libs.plugins.loom) apply false
+    alias(libs.plugins.architectury) apply false
+    alias(libs.plugins.shadow) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
 }
 
-architectury {
-    minecraft = minecraft_version
-}
+//architectury {
+//    minecraft = minecraft_version
+//}
 
 allprojects {
     group = maven_group
@@ -15,10 +15,10 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'dev.architectury.loom'
-    apply plugin: 'architectury-plugin'
-    apply plugin: 'maven-publish'
-    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin : 'maven-publish'
+    apply plugin : libs.plugins.kotlin.jvm.get().pluginId
+    apply plugin : libs.plugins.loom.get().pluginId
+    apply plugin : libs.plugins.architectury.get().pluginId
 
     base {
         // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
@@ -26,11 +26,6 @@ subprojects {
     }
 
     repositories {
-        // Add repositories to retrieve artifacts from in here.
-        // You should only use this when depending on other mods because
-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-        // for more information about repositories.
         mavenCentral()
         maven {
             name = "Cobblemon"
@@ -47,7 +42,7 @@ subprojects {
     }
 
     dependencies {
-        minecraft "net.minecraft:minecraft:$minecraft_version"
+        minecraft libs.minecraft
         mappings loom.officialMojangMappings()
     }
 
@@ -72,14 +67,6 @@ subprojects {
                 artifactId = base.archivesName.get()
                 from components.java
             }
-        }
-
-        // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-        repositories {
-            // Add repositories to publish to here.
-            // Notice: This block does NOT have the same function as the block in the top level.
-            // The repositories here will be used for publishing your artifact, not for
-            // retrieving dependencies.
         }
     }
 }

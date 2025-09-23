@@ -36,16 +36,16 @@ repositories {
 }
 
 dependencies {
-    neoForge "net.neoforged:neoforge:$neoforge_version"
+    neoForge libs.neoforge
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 
-    modImplementation "com.cobblemon:neoforge:${cobblemon_version}"
-    modCompileOnly "maven.modrinth:cobblemon-myths-and-legends-sidemod:$mal_neoforge_version"
-    modCompileOnly "maven.modrinth:cobblemon-counter:$counter_neoforge_version"
+    modImplementation libs.cobblemon.neoforge
+    modCompileOnly libs.cobblemon.mal.neoforge
+    modCompileOnly libs.cobblemon.counter.neoforge
 
-    implementation("thedarkcolour:kotlinforforge-neoforge:${kotlinforforge_version}") {
+    implementation(libs.kotlin.for.forge) {
         exclude group: "net.neoforged.fancymodloader", module: "loader"
     }
 }

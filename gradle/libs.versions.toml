@@ -1,0 +1,41 @@
+[versions]
+kotlin = "2.1.0"
+minecraft = "1.21.1"
+
+fabric-loader = "0.16.9"
+fabric-api = "0.105.0+1.21.1"
+neoforge = "21.1.51"
+
+kotlinforforge = "5.5.0"
+fabric-kotlin = "1.12.2+kotlin.2.0.20"
+cobblemon = "1.6.1+1.21.1"
+mal-fabric = "1.8.0"
+mal-neoforge = "occT2ebf"
+counter-neoforge = "1.6-neoforge-1.5.0"
+counter-fabric = "1.6-fabric-1.5.0"
+loom = "1.9-SNAPSHOT"
+architectury = "3.4-SNAPSHOT"
+shadow = "8.1.1"
+
+[libraries]
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+fabric-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric-kotlin" }
+fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
+
+cobblemon = { module = "com.cobblemon:mod", version.ref = "cobblemon" }
+cobblemon-fabric = { module = "com.cobblemon:fabric", version.ref = "cobblemon" }
+cobblemon-neoforge = { module = "com.cobblemon:neoforge", version.ref = "cobblemon" }
+cobblemon-mal-fabric = { module = "maven.modrinth:cobblemon-myths-and-legends-sidemod", version.ref = "mal-fabric" }
+cobblemon-mal-neoforge = { module = "maven.modrinth:cobblemon-myths-and-legends-sidemod", version.ref = "mal-neoforge" }
+cobblemon-counter-fabric = { module = "maven.modrinth:cobblemon-counter", version.ref = "counter-fabric" }
+cobblemon-counter-neoforge = { module = "maven.modrinth:cobblemon-counter", version.ref = "counter-neoforge" }
+
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
+minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
+kotlin-for-forge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinforforge" }
+
+[plugins]
+loom = { id = "dev.architectury.loom", version.ref = "loom" }
+architectury = { id = "architectury-plugin", version.ref = "architectury" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
