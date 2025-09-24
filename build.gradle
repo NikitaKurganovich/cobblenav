@@ -1,77 +1,32 @@
-buildscript {
-    dependencies {
-        classpath libs.architectury.plugin
-    }
+plugins {
+    id 'dev.architectury.loom' version '1.11-SNAPSHOT' apply false
+    id 'architectury-plugin' version '3.4-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
+    id 'org.jetbrains.kotlin.jvm' version '2.0.20'
 }
 
-plugins {
-    alias(libs.plugins.loom) apply false
-    alias(libs.plugins.shadow) apply false
-    alias(libs.plugins.kotlin.jvm) apply false
+architectury {
+    minecraft = minecraft_version
 }
 
 allprojects {
     group = maven_group
     version = mod_version
-}
-
-subprojects {
-    apply plugin : 'maven-publish'
-    apply plugin : libs.plugins.kotlin.jvm.get().pluginId
-    apply plugin : libs.plugins.loom.get().pluginId
-    apply plugin: 'architectury-plugin'
-
-    architectury {
-        minecraft = libs.versions.minecraft.get()
-    }
-
-    base {
-        // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
-        archivesName = "$archives_name-$project.name"
-    }
 
     repositories {
+        gradlePluginPortal()
         mavenCentral()
-        maven {
-            name = "Cobblemon"
-            url = "https://maven.impactdev.net/repository/development/"
-        }
-        maven {
-            name = "Modrinth"
-            url = "https://api.modrinth.com/maven"
-        }
-    }
-
-    loom {
-        silentMojangMappingsLicense()
-    }
-
-    dependencies {
-        minecraft libs.minecraft
-        mappings loom.officialMojangMappings()
-    }
-
-    java {
-        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-        // if it is present.
-        // If you remove this line, sources will not be generated.
-        withSourcesJar()
-
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    tasks.withType(JavaCompile).configureEach {
-        it.options.release = 21
-    }
-
-    // Configure Maven publishing.
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifactId = base.archivesName.get()
-                from components.java
-            }
-        }
+        maven { url "https://maven.architectury.dev/" }
+        maven { url "https://maven.fabricmc.net/" }
+        maven { url "https://maven.minecraftforge.net/" }
+        maven { url "https://maven.terraformersmc.com/" }
+        maven { url "https://artefacts.cobblemon.com/releases" }
+        maven { url "https://maven.impactdev.net/repository/development/" }
+        maven { url "https://api.modrinth.com/maven" }
+        maven { url "https://maven.neoforged.net/releases" }
+        maven { url "https://thedarkcolour.github.io/KotlinForForge/" }
     }
 }
+
+
+

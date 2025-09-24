@@ -7,8 +7,9 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'cobblenav'
 
+rootProject.name = 'cobblenav'
+includeBuild('build-logic')
 include 'common'
 include 'fabric'
 include 'neoforge'

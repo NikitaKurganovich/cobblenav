@@ -1,6 +1,7 @@
 [versions]
 kotlin = "2.1.0"
 minecraft = "1.21.1"
+java = "21"
 
 fabric-loader = "0.16.9"
 fabric-api = "0.105.0+1.21.1"
@@ -13,7 +14,7 @@ mal-fabric = "1.8.0"
 mal-neoforge = "occT2ebf"
 counter-neoforge = "1.6-neoforge-1.5.0"
 counter-fabric = "1.6-fabric-1.5.0"
-loom = "1.9-SNAPSHOT"
+loom = "1.9.428"
 architectury = "3.4-SNAPSHOT"
 shadow = "8.1.1"
 
@@ -33,9 +34,24 @@ cobblemon-counter-neoforge = { module = "maven.modrinth:cobblemon-counter", vers
 neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
 kotlin-for-forge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinforforge" }
-architectury-plugin = { module = "architectury-plugin:architectury-plugin.gradle.plugin", version.ref = "architectury" }
+
+# Gradle plugins
+gradleplugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradleplugin-architectury = { module = "architectury-plugin:architectury-plugin.gradle.plugin", version.ref = "architectury" }
+gradleplugin-loom = { module = "dev.architectury:architectury-loom", version.ref = "loom" }
+gradleplugin-shadow = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
 
 [plugins]
-loom = { id = "dev.architectury.loom", version.ref = "loom" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+
+# Project plugins
+
+cobblenav-convention-base = { id = "com.metacontent.cobblenav.base" }
+
+[bundles]
+gradleplugins = [
+    "gradleplugin-kotlin",
+    "gradleplugin-architectury",
+    "gradleplugin-loom",
+    "gradleplugin-shadow"
+]
