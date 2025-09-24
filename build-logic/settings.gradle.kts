@@ -16,6 +16,8 @@ dependencyResolutionManagement {
         gradlePluginPortal()
         mavenCentral()
         maven("https://maven.architectury.dev/")
+        maven("https://maven.fabricmc.net/")
+        maven("https://nexus.velocitypowered.com/repository/maven-public/")
     }
 
     versionCatalogs {
