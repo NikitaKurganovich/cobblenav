@@ -33,7 +33,7 @@ cobblemon-counter-neoforge = { module = "maven.modrinth:cobblemon-counter", vers
 
 neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
-kotlin-for-forge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinforforge" }
+kotlin-forge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinforforge" }
 
 # Gradle plugins
 gradleplugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
