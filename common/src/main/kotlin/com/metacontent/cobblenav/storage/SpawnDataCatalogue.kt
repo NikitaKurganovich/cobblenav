@@ -47,7 +47,7 @@ class SpawnDataCatalogue(
     fun catalogue(id: String): Boolean {
         return spawnDetailIds.add(id).also {
             if (it) {
-                player?.sendSystemMessage(Component.translatable("gui.cobblenav.notification.catalogue_updated", id))
+//                player?.sendSystemMessage(Component.translatable("gui.cobblenav.notification.catalogue_updated", id))
                 onCatalogueUpdated()
             }
         }

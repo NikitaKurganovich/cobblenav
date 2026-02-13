@@ -6,7 +6,8 @@
     "client": [
         "GameRendererMixin",
         "GrowingPlantBlockMixin",
-        "GuiMixin"
+        "GuiMixin",
+        "ItemRendererMixin"
     ],
     "mixins": [
         "PokedexManagerMixin",
