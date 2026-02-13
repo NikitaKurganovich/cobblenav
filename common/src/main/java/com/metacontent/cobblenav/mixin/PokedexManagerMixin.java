@@ -27,7 +27,6 @@ public abstract class PokedexManagerMixin {
         CobblenavEvents.INSTANCE.getPOKEMON_ENCOUNTERED().emit(new PokemonEncounteredEvent(pokedexEntityData.getPokemon(), getPlayer(getUuid())));
     }
 
-
     @Shadow
     public abstract UUID getUuid();
 }
