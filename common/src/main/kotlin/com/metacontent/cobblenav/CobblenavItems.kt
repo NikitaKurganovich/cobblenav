@@ -97,7 +97,7 @@ object CobblenavItems : RegistryProvider<Registry<Item>, ResourceKey<Registry<It
         entries.accept(FISHINGNAV)
     }
 
-    fun loadFlickeringModels(consumer: (ResourceLocation) -> Unit) {
+    fun loadSpecialModels(consumer: (ResourceLocation) -> Unit) {
         pokenavItems.forEach {
             consumer(it.flickeringModel)
             consumer(it.inHandModel)

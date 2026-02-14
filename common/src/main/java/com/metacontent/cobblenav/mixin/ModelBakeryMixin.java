@@ -21,7 +21,7 @@ public abstract class ModelBakeryMixin {
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/ModelBakery;loadSpecialItemModelAndDependencies(Lnet/minecraft/client/resources/model/ModelResourceLocation;)V", ordinal = 0))
     private void injectInit(BlockColors blockColors, ProfilerFiller profilerFiller, Map map, Map map2, CallbackInfo ci) {
-        CobblenavItems.INSTANCE.loadFlickeringModels(model -> {
+        CobblenavItems.INSTANCE.loadSpecialModels(model -> {
             this.loadSpecialItemModelAndDependencies(ModelResourceLocation.inventory(model));
             return Unit.INSTANCE;
         });
