@@ -63,7 +63,7 @@ class Fishingnav : ConditionalModelItem(Properties().stacksTo(1)) {
         if (displayContext.isGui()) {
             return BASE_MODEL
         } else {
-            if (Minecraft.getInstance().screen is FishingnavScreen) {
+            if (Minecraft.getInstance().screen is FishingnavScreen && displayContext.firstPerson()) {
                 return OPENED_IN_HAND_MODEL
             }
             return IN_HAND_MODEL
