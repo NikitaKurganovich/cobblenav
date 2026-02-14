@@ -19,6 +19,7 @@ object CobblenavItems : RegistryProvider<Registry<Item>, ResourceKey<Registry<It
     override val resourceKey: ResourceKey<Registry<Item>> = Registries.ITEM
 
     private val pokenavItems = mutableListOf<Pokenav>()
+    private val pokefinderItems = mutableListOf<Pokefinder>()
 
     // Pokenavs
     val POKENAV = pokenavItem(PokenavModelType.BASE)
@@ -52,14 +53,14 @@ object CobblenavItems : RegistryProvider<Registry<Item>, ResourceKey<Registry<It
     val WHITE_POKEFINDER = pokefinderItem("white")
     val YELLOW_POKEFINDER = pokefinderItem("yellow")
 
-    val FISHINGNAV = add("fishingnav_item", Fishingnav())
+    val FISHINGNAV = add(Fishingnav.REGISTRY_KEY, Fishingnav())
 
     private fun pokenavItem(model: PokenavModelType): Item {
         return add(Pokenav.BASE_REGISTRY_KEY + model.modelName, Pokenav(model)).also { pokenavItems.add(it) }
     }
 
     private fun pokefinderItem(color: String): Item {
-        return add(Pokefinder.BASE_REGISTRY_KEY + color, Pokefinder())
+        return add(Pokefinder.BASE_REGISTRY_KEY + color, Pokefinder(color)).also { pokefinderItems.add(it) }
     }
 
     fun addToGroup(displayContext: ItemDisplayParameters, entries: Output) {
@@ -97,6 +98,17 @@ object CobblenavItems : RegistryProvider<Registry<Item>, ResourceKey<Registry<It
     }
 
     fun loadFlickeringModels(consumer: (ResourceLocation) -> Unit) {
-        pokenavItems.forEach { consumer(it.getFlickeringModel()) }
+        pokenavItems.forEach {
+            consumer(it.flickeringModel)
+            consumer(it.inHandModel)
+            consumer(it.inHandFlickeringModel)
+            consumer(it.openedInHandModel)
+        }
+        pokefinderItems.forEach {
+            consumer(it.inHandModel)
+            consumer(it.openedInHandModel)
+        }
+        consumer(Fishingnav.IN_HAND_MODEL)
+        consumer(Fishingnav.OPENED_IN_HAND_MODEL)
     }
 }
