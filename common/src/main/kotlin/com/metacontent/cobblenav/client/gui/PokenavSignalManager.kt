@@ -15,11 +15,6 @@ object PokenavSignalManager {
     const val BASE_SHAKE_FREQUENCY = 16f
     const val BASE_SHAKE_DURATION = 10f
     const val WAIT_DURATION = 10f
-    val FITTING_DISPLAY_CONTEXTS = listOf(
-        ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
-        ItemDisplayContext.FIRST_PERSON_RIGHT_HAND,
-        ItemDisplayContext.GUI
-    )
 
     private val queue = ArrayDeque<Signal>()
 
@@ -92,9 +87,6 @@ object PokenavSignalManager {
         poseStack.scale(SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE)
         poseStack.rotateAround(getRotation(), 0f, -0.25f, 0f)
     }
-
-    @JvmStatic
-    fun isFittingContext(displayContext: ItemDisplayContext) = FITTING_DISPLAY_CONTEXTS.contains(displayContext)
 
     data class Signal(
         val amount: Int,
