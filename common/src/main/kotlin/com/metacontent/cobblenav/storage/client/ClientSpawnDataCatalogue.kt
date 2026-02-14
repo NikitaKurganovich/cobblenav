@@ -34,7 +34,7 @@ class ClientSpawnDataCatalogue(
                 PokenavSignalManager.add(SIGNAL.copy())
                 val current = CobblenavClient.spawnDataCatalogue.spawnDetailIds
                 val updated = data.spawnDetailIds
-                CobblenavClient.spawnDataCatalogue.newlyCataloguedAmount = (updated.size - current.size).coerceAtLeast(0)
+                CobblenavClient.spawnDataCatalogue.newlyCataloguedAmount += (updated.size - current.size).coerceAtLeast(0)
                 current.addAll(updated)
             }
         }
