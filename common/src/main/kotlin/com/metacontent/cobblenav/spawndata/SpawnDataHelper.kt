@@ -1,6 +1,7 @@
 package com.metacontent.cobblenav.spawndata
 
 import com.cobblemon.mod.common.Cobblemon
+import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.cobblemon.mod.common.api.spawning.SpawnCause
 import com.cobblemon.mod.common.api.spawning.detail.SpawnDetail
 import com.cobblemon.mod.common.api.spawning.fishing.FishingSpawnCause
@@ -179,15 +180,15 @@ object SpawnDataHelper {
     }
 
     fun onInit() {
-        CobblenavEvents.POKEMON_ENCOUNTERED.subscribe { (pokemon, player) ->
-            player?.catalogueDetailId(pokemon)
-        }
-
-//        CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe { event ->
-//            event.spawnablePosition.cause.entity?.let {
-//                if (it is ServerPlayer) it.catalogueDetailId(event.entity.pokemon)
-//            }
+//        CobblenavEvents.POKEMON_ENCOUNTERED.subscribe { (pokemon, player) ->
+//            player?.catalogueDetailId(pokemon)
 //        }
+
+        CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe { event ->
+            event.spawnablePosition.cause.entity?.let {
+                if (it is ServerPlayer) it.catalogueDetailId(event.entity.pokemon)
+            }
+        }
     }
 
     fun ServerPlayer.catalogueDetailId(pokemon: Pokemon) {

@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.block.entity.PokeSnackBlockEntity
 import com.cobblemon.mod.common.util.raycast
 import com.metacontent.cobblenav.networking.packet.client.OpenPokenavPacket
 import com.metacontent.cobblenav.os.PokenavOS
+import com.metacontent.cobblenav.util.cobblenavResource
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
@@ -24,6 +25,8 @@ class Pokenav(private val model: PokenavModelType) : Item(Properties().stacksTo(
         const val TRANSLATION_KEY = "item.cobblenav.pokenav_item"
         const val BASE_TOOLTIP_TRANSLATION_KEY = "item.cobblenav.pokenav_item."
     }
+
+    fun getFlickeringModel() = cobblenavResource("flicker/" + BASE_REGISTRY_KEY + model.modelName)
 
     override fun use(
         level: Level,
