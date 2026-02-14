@@ -5,16 +5,19 @@ import com.cobblemon.mod.common.net.messages.client.SetClientPlayerDataPacket
 import com.cobblemon.mod.common.util.readString
 import com.cobblemon.mod.common.util.writeString
 import com.metacontent.cobblenav.client.CobblenavClient
-import com.metacontent.cobblenav.client.PokenavSignalManager
+import com.metacontent.cobblenav.client.gui.PokenavSignalManager
+import com.metacontent.cobblenav.client.gui.util.RGB
 import com.metacontent.cobblenav.storage.AbstractSpawnDataCatalogue
 import com.metacontent.cobblenav.storage.CobblenavDataStoreTypes
+import net.minecraft.client.Minecraft
 import net.minecraft.network.RegistryFriendlyByteBuf
+import net.minecraft.network.chat.Component
 
 class ClientSpawnDataCatalogue(
     spawnDetailIds: MutableSet<String> = mutableSetOf()
 ) : AbstractSpawnDataCatalogue(spawnDetailIds), ClientInstancedPlayerData {
     companion object {
-        val SIGNAL = PokenavSignalManager.Signal(1, 0, 500f, 0f)
+        val SIGNAL = PokenavSignalManager.Signal(1, RGB(255, 255, 255), 25f, 0f)
 
         fun decode(buffer: RegistryFriendlyByteBuf): SetClientPlayerDataPacket = SetClientPlayerDataPacket(
             type = CobblenavDataStoreTypes.SPAWN_DATA,
@@ -32,6 +35,7 @@ class ClientSpawnDataCatalogue(
         fun incrementalAfterDecode(data: ClientInstancedPlayerData) {
             (data as? ClientSpawnDataCatalogue)?.let {
                 PokenavSignalManager.add(SIGNAL.copy())
+                Minecraft.getInstance().player?.sendSystemMessage(Component.literal("added"))
                 CobblenavClient.spawnDataCatalogue.spawnDetailIds.addAll(data.spawnDetailIds)
             }
         }

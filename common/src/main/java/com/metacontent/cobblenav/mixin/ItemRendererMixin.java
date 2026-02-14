@@ -1,9 +1,8 @@
 package com.metacontent.cobblenav.mixin;
 
-import com.metacontent.cobblenav.client.PokenavSignalManager;
+import com.metacontent.cobblenav.client.gui.PokenavSignalManager;
 import com.metacontent.cobblenav.item.Pokenav;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -22,14 +21,12 @@ public abstract class ItemRendererMixin {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V"))
     private void inject(ItemStack itemStack, ItemDisplayContext itemDisplayContext, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BakedModel bakedModel, CallbackInfo ci) {
-        if (PokenavSignalManager.INSTANCE.getNON_INVENTORY_DISPLAY_CONTEXTS().contains(itemDisplayContext)) return;
+        if (!PokenavSignalManager.INSTANCE.getINVENTORY_DISPLAY_CONTEXTS().contains(itemDisplayContext)) return;
 
         if (itemStack.getItem() instanceof Pokenav) {
-            float scale = PokenavSignalManager.isFlickering() ? 1.05f : 1f;
-            poseStack.scale(scale, scale, scale);
-            poseStack.rotateAround(PokenavSignalManager.getRotation(), 0f, 0f, 0f);
-            float delta = Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
-            PokenavSignalManager.tick(delta);
+            if (PokenavSignalManager.isFlickering()) {
+                PokenavSignalManager.flicker(poseStack);
+            }
         }
     }
 }

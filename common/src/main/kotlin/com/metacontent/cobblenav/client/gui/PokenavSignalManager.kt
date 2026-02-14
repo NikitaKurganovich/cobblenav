@@ -1,17 +1,21 @@
-package com.metacontent.cobblenav.client
+package com.metacontent.cobblenav.client.gui
 
 import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
+import com.metacontent.cobblenav.client.gui.util.RGB
 import com.metacontent.cobblenav.client.gui.util.Timer
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.world.item.ItemDisplayContext
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import kotlin.math.sin
 
 object PokenavSignalManager {
-    val NON_INVENTORY_DISPLAY_CONTEXTS = listOf(
-        ItemDisplayContext.HEAD,
+    const val SIGNAL_ITEM_SCALE = 1.05f
+    const val ROTATION_AMPLITUDE = 8f
+    const val ROTATION_FREQUENCY = 16f
+    val INVENTORY_DISPLAY_CONTEXTS = listOf(
         ItemDisplayContext.NONE,
-        ItemDisplayContext.GROUND
+        ItemDisplayContext.GUI
     )
 
     private val queue = ArrayDeque<Signal>()
@@ -54,14 +58,26 @@ object PokenavSignalManager {
     }
 
     @JvmStatic
-    fun isFlickering() = isFlickering
+    fun isFlickering() = currentSignal != null && isFlickering
 
     @JvmStatic
-    fun getRotation() = Quaternionf().fromEulerXYZDegrees(Vector3f(0f, 0f, if (isFlickering) 8f * sin(timer.getProgress() * 16f) else 0f))
+    fun getRotation() = Quaternionf().fromEulerXYZDegrees(
+        Vector3f(
+            0f,
+            0f,
+            ROTATION_AMPLITUDE * sin(timer.getProgress() * ROTATION_FREQUENCY)
+        )
+    )
+
+    @JvmStatic
+    fun flicker(poseStack: PoseStack) {
+        poseStack.scale(SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE)
+        poseStack.rotateAround(getRotation(), 0f, -0.25f, 0f)
+    }
 
     data class Signal(
         val amount: Int,
-        val color: Int,
+        val color: RGB,
         val flickerDuration: Float,
         val idleDuration: Float
     ) {
