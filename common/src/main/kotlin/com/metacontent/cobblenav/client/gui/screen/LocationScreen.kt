@@ -238,6 +238,12 @@ class LocationScreen(
 
         sorting = CobblenavClient.pokenavSettings?.preferences?.sorting ?: Sorting.ASCENDING
         sortButton.disabled = false
+
+        val newlyCatalogued = CobblenavClient.spawnDataCatalogue.newlyCataloguedAmount
+        if (newlyCatalogued > 0) {
+            notifications.add(Component.translatable("gui.cobblenav.notification.newly_catalogued", newlyCatalogued))
+            CobblenavClient.spawnDataCatalogue.newlyCataloguedAmount = 0
+        }
     }
 
     fun receiveSpawnData(spawnDataList: List<CheckedSpawnData>) {
