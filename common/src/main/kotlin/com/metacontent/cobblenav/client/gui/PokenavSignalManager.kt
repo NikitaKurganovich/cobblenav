@@ -25,7 +25,7 @@ object PokenavSignalManager {
     private val queue = ArrayDeque<Signal>()
 
     private var currentSignal: Signal? = null
-    val timer = Timer(0f)
+    private val timer = Timer(0f)
     private val waitTimer = Timer(WAIT_DURATION)
     private var isFlickering = false
 
