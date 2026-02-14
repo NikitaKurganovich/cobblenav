@@ -77,7 +77,7 @@ class Pokenav(private val model: PokenavModelType) : ConditionalModelItem(Proper
             }
             return baseModel
         } else {
-            if (Minecraft.getInstance().screen is PokenavScreen) {
+            if (Minecraft.getInstance().screen is PokenavScreen && displayContext.firstPerson()) {
                 return openedInHandModel
             }
             if (PokenavSignalManager.isFlickering()) {
