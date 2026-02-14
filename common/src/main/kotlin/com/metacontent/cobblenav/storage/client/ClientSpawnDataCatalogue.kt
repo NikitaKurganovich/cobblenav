@@ -35,10 +35,16 @@ class ClientSpawnDataCatalogue(
         fun incrementalAfterDecode(data: ClientInstancedPlayerData) {
             (data as? ClientSpawnDataCatalogue)?.let {
                 PokenavSignalManager.add(SIGNAL.copy())
-                CobblenavClient.spawnDataCatalogue.spawnDetailIds.addAll(data.spawnDetailIds)
+                val current = CobblenavClient.spawnDataCatalogue.spawnDetailIds
+                val updated = data.spawnDetailIds
+                CobblenavClient.spawnDataCatalogue.amountAdded = (updated.size - current.size).coerceAtLeast(0)
+                current.addAll(updated)
             }
         }
     }
+
+    var amountAdded = 0
+        internal set
 
     override fun encode(buf: RegistryFriendlyByteBuf) {
         buf.writeCollection(spawnDetailIds) { b, s -> b.writeString(s) }
