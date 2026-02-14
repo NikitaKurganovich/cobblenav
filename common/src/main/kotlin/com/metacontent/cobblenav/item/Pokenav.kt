@@ -26,7 +26,7 @@ class Pokenav(private val model: PokenavModelType) : Item(Properties().stacksTo(
         const val BASE_TOOLTIP_TRANSLATION_KEY = "item.cobblenav.pokenav_item."
     }
 
-    fun getFlickeringModel() = cobblenavResource(BASE_REGISTRY_KEY + model.modelName + "_flicker")
+    fun getFlickeringModel() = cobblenavResource("flicker/" + BASE_REGISTRY_KEY + model.modelName)
 
     override fun use(
         level: Level,
