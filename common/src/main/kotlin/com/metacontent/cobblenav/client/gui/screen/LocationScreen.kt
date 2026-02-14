@@ -244,6 +244,9 @@ class LocationScreen(
             notifications.add(Component.translatable("gui.cobblenav.notification.newly_catalogued", newlyCatalogued))
             CobblenavClient.spawnDataCatalogue.newlyCataloguedAmount = 0
         }
+        if (fixedAreaPoint != null) {
+            notifications.add(Component.translatable("gui.cobblenav.notification.pokesnack"))
+        }
     }
 
     fun receiveSpawnData(spawnDataList: List<CheckedSpawnData>) {
