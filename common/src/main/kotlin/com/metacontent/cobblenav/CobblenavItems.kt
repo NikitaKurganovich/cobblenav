@@ -9,6 +9,7 @@ import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab.ItemDisplayParameters
 import net.minecraft.world.item.CreativeModeTab.Output
 import net.minecraft.world.item.Item
@@ -16,6 +17,8 @@ import net.minecraft.world.item.Item
 object CobblenavItems : RegistryProvider<Registry<Item>, ResourceKey<Registry<Item>>, Item>() {
     override val registry: Registry<Item> = BuiltInRegistries.ITEM
     override val resourceKey: ResourceKey<Registry<Item>> = Registries.ITEM
+
+    private val pokenavItems = mutableListOf<Pokenav>()
 
     // Pokenavs
     val POKENAV = pokenavItem(PokenavModelType.BASE)
@@ -52,7 +55,7 @@ object CobblenavItems : RegistryProvider<Registry<Item>, ResourceKey<Registry<It
     val FISHINGNAV = add("fishingnav_item", Fishingnav())
 
     private fun pokenavItem(model: PokenavModelType): Item {
-        return add(Pokenav.BASE_REGISTRY_KEY + model.modelName, Pokenav(model))
+        return add(Pokenav.BASE_REGISTRY_KEY + model.modelName, Pokenav(model)).also { pokenavItems.add(it) }
     }
 
     private fun pokefinderItem(color: String): Item {
@@ -91,5 +94,9 @@ object CobblenavItems : RegistryProvider<Registry<Item>, ResourceKey<Registry<It
         entries.accept(YELLOW_POKEFINDER)
 
         entries.accept(FISHINGNAV)
+    }
+
+    fun loadFlickeringModels(consumer: (ResourceLocation) -> Unit) {
+        pokenavItems.forEach { consumer(it.getFlickeringModel()) }
     }
 }

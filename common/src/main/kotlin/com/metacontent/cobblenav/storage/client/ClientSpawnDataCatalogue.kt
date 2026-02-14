@@ -35,7 +35,6 @@ class ClientSpawnDataCatalogue(
         fun incrementalAfterDecode(data: ClientInstancedPlayerData) {
             (data as? ClientSpawnDataCatalogue)?.let {
                 PokenavSignalManager.add(SIGNAL.copy())
-                Minecraft.getInstance().player?.sendSystemMessage(Component.literal("added"))
                 CobblenavClient.spawnDataCatalogue.spawnDetailIds.addAll(data.spawnDetailIds)
             }
         }

@@ -70,7 +70,7 @@ object PokenavSignalManager {
     )
 
     @JvmStatic
-    fun flicker(poseStack: PoseStack) {
+    fun shake(poseStack: PoseStack) {
         poseStack.scale(SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE)
         poseStack.rotateAround(getRotation(), 0f, -0.25f, 0f)
     }
