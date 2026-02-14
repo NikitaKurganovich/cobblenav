@@ -30,7 +30,7 @@ object PokenavSignalManager {
         if (currentSignal == null && queue.isNotEmpty()) {
             currentSignal = queue.removeFirst()
             isFlickering = true
-            timer.reset(currentSignal!!.flickerDuration)
+            timer.reset(currentSignal!!.enabledStateDuration)
         }
 
         currentSignal ?: return
@@ -41,9 +41,9 @@ object PokenavSignalManager {
         }
 
         val updatedTime = if (isFlickering) {
-            currentSignal!!.idleDuration.also { currentSignal!!.flickersLeft-- }
+            currentSignal!!.disabledStateDuration.also { currentSignal!!.flickersLeft-- }
         } else {
-            currentSignal!!.flickerDuration
+            currentSignal!!.enabledStateDuration
         }
         timer.reset(updatedTime)
         isFlickering = !isFlickering
@@ -84,8 +84,8 @@ object PokenavSignalManager {
 
     data class Signal(
         val amount: Int,
-        val flickerDuration: Float,
-        val idleDuration: Float
+        val enabledStateDuration: Float,
+        val disabledStateDuration: Float
     ) {
         internal var flickersLeft = amount
     }
