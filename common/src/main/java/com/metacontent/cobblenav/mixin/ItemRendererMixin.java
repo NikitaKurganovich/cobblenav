@@ -26,9 +26,8 @@ public abstract class ItemRendererMixin {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V"))
     private void shake(ItemStack itemStack, ItemDisplayContext itemDisplayContext, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BakedModel bakedModel, CallbackInfo ci) {
-        if (!PokenavSignalManager.INSTANCE.getINVENTORY_DISPLAY_CONTEXTS().contains(itemDisplayContext)) return;
-
         if (itemStack.getItem() instanceof Pokenav) {
+            if (!PokenavSignalManager.isFittingContext(itemDisplayContext)) return;
             if (PokenavSignalManager.hasSignal()) {
                 PokenavSignalManager.shake(poseStack);
             }
@@ -37,9 +36,8 @@ public abstract class ItemRendererMixin {
 
     @ModifyVariable(method = "render", at = @At("HEAD"), argsOnly = true)
     public BakedModel flicker(BakedModel bakedModel, ItemStack stack, ItemDisplayContext renderMode) {
-        if (!PokenavSignalManager.INSTANCE.getINVENTORY_DISPLAY_CONTEXTS().contains(renderMode)) return bakedModel;
-
         if (stack.getItem() instanceof Pokenav pokenav) {
+            if (!PokenavSignalManager.isFittingContext(renderMode)) return bakedModel;
             if (PokenavSignalManager.isFlickering()) {
                 return itemModelShaper.getModelManager().getModel(ModelResourceLocation.inventory(pokenav.getFlickeringModel()));
             }

@@ -12,9 +12,11 @@ object PokenavSignalManager {
     const val SIGNAL_ITEM_SCALE = 1.05f
     const val ROTATION_AMPLITUDE = 8f
     const val ROTATION_FREQUENCY = 16f
-    val INVENTORY_DISPLAY_CONTEXTS = listOf(
+    val NON_INVENTORY_DISPLAY_CONTEXTS = listOf(
         ItemDisplayContext.NONE,
-        ItemDisplayContext.GUI
+        ItemDisplayContext.HEAD,
+        ItemDisplayContext.GROUND,
+        ItemDisplayContext.FIXED
     )
 
     private val queue = ArrayDeque<Signal>()
@@ -76,6 +78,9 @@ object PokenavSignalManager {
         poseStack.scale(SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE)
         poseStack.rotateAround(getRotation(), 0f, -0.25f, 0f)
     }
+
+    @JvmStatic
+    fun isFittingContext(displayContext: ItemDisplayContext) = !NON_INVENTORY_DISPLAY_CONTEXTS.contains(displayContext)
 
     data class Signal(
         val amount: Int,
