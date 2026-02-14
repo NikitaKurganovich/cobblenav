@@ -6,12 +6,9 @@ import com.cobblemon.mod.common.util.readString
 import com.cobblemon.mod.common.util.writeString
 import com.metacontent.cobblenav.client.CobblenavClient
 import com.metacontent.cobblenav.client.gui.PokenavSignalManager
-import com.metacontent.cobblenav.client.gui.util.RGB
 import com.metacontent.cobblenav.storage.AbstractSpawnDataCatalogue
 import com.metacontent.cobblenav.storage.CobblenavDataStoreTypes
-import net.minecraft.client.Minecraft
 import net.minecraft.network.RegistryFriendlyByteBuf
-import net.minecraft.network.chat.Component
 
 class ClientSpawnDataCatalogue(
     spawnDetailIds: MutableSet<String> = mutableSetOf()
@@ -37,13 +34,13 @@ class ClientSpawnDataCatalogue(
                 PokenavSignalManager.add(SIGNAL.copy())
                 val current = CobblenavClient.spawnDataCatalogue.spawnDetailIds
                 val updated = data.spawnDetailIds
-                CobblenavClient.spawnDataCatalogue.amountAdded = (updated.size - current.size).coerceAtLeast(0)
+                CobblenavClient.spawnDataCatalogue.newlyCataloguedAmount = (updated.size - current.size).coerceAtLeast(0)
                 current.addAll(updated)
             }
         }
     }
 
-    var amountAdded = 0
+    var newlyCataloguedAmount = 0
         internal set
 
     override fun encode(buf: RegistryFriendlyByteBuf) {
