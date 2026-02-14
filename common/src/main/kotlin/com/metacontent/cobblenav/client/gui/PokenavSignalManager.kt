@@ -6,12 +6,15 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.world.item.ItemDisplayContext
 import org.joml.Quaternionf
 import org.joml.Vector3f
+import kotlin.math.PI
 import kotlin.math.sin
 
 object PokenavSignalManager {
     const val SIGNAL_ITEM_SCALE = 1.05f
     const val ROTATION_AMPLITUDE = 8f
-    const val ROTATION_FREQUENCY = 16f
+    const val ROTATION_FREQUENCY = 4f
+    const val SHAKE_DURATION = 20f
+    const val WAIT_DURATION = 10f
     val NON_INVENTORY_DISPLAY_CONTEXTS = listOf(
         ItemDisplayContext.NONE,
         ItemDisplayContext.HEAD,
@@ -23,10 +26,16 @@ object PokenavSignalManager {
 
     private var currentSignal: Signal? = null
     val timer = Timer(0f)
+    private val waitTimer = Timer(WAIT_DURATION)
     private var isFlickering = false
 
     @JvmStatic
     fun tick(delta: Float) {
+        if (!waitTimer.isOver()) {
+            waitTimer.tick(delta)
+            return
+        }
+
         if (currentSignal == null && queue.isNotEmpty()) {
             currentSignal = queue.removeFirst()
             isFlickering = true
@@ -50,6 +59,7 @@ object PokenavSignalManager {
 
         if (currentSignal!!.flickersLeft == 0) {
             currentSignal = null
+            waitTimer.reset()
         }
     }
 
@@ -69,7 +79,7 @@ object PokenavSignalManager {
         Vector3f(
             0f,
             0f,
-            ROTATION_AMPLITUDE * sin(timer.getProgress() * ROTATION_FREQUENCY)
+            ROTATION_AMPLITUDE * sin(timer.getProgress() * PI.toFloat() / 2 * 1)
         )
     )
 
