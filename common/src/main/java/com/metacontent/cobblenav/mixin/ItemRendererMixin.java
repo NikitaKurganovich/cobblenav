@@ -29,7 +29,7 @@ public abstract class ItemRendererMixin {
         if (!PokenavSignalManager.INSTANCE.getINVENTORY_DISPLAY_CONTEXTS().contains(itemDisplayContext)) return;
 
         if (itemStack.getItem() instanceof Pokenav) {
-            if (PokenavSignalManager.isFlickering()) {
+            if (PokenavSignalManager.hasSignal()) {
                 PokenavSignalManager.shake(poseStack);
             }
         }
