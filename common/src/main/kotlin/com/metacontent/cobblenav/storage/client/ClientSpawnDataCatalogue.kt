@@ -17,7 +17,7 @@ class ClientSpawnDataCatalogue(
     spawnDetailIds: MutableSet<String> = mutableSetOf()
 ) : AbstractSpawnDataCatalogue(spawnDetailIds), ClientInstancedPlayerData {
     companion object {
-        val SIGNAL = PokenavSignalManager.Signal(1, RGB(255, 255, 255), 25f, 0f)
+        val SIGNAL = PokenavSignalManager.Signal(1, 25f, 0f)
 
         fun decode(buffer: RegistryFriendlyByteBuf): SetClientPlayerDataPacket = SetClientPlayerDataPacket(
             type = CobblenavDataStoreTypes.SPAWN_DATA,
