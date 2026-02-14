@@ -10,22 +10,22 @@ import kotlin.math.PI
 import kotlin.math.sin
 
 object PokenavSignalManager {
-    const val SIGNAL_ITEM_SCALE = 1.05f
-    const val ROTATION_AMPLITUDE = 8f
-    const val ROTATION_FREQUENCY = 4f
-    const val SHAKE_DURATION = 20f
+    const val SIGNAL_ITEM_SCALE = 1.025f
+    const val SHAKE_AMPLITUDE = 4f
+    const val BASE_SHAKE_FREQUENCY = 16f
+    const val BASE_SHAKE_DURATION = 10f
     const val WAIT_DURATION = 10f
-    val NON_INVENTORY_DISPLAY_CONTEXTS = listOf(
-        ItemDisplayContext.NONE,
-        ItemDisplayContext.HEAD,
-        ItemDisplayContext.GROUND,
-        ItemDisplayContext.FIXED
+    val FITTING_DISPLAY_CONTEXTS = listOf(
+        ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
+        ItemDisplayContext.FIRST_PERSON_RIGHT_HAND,
+        ItemDisplayContext.GUI
     )
 
     private val queue = ArrayDeque<Signal>()
 
     private var currentSignal: Signal? = null
     private val timer = Timer(0f)
+    private val shakeTimer = Timer(0f)
     private val waitTimer = Timer(WAIT_DURATION)
     private var isFlickering = false
 
@@ -40,9 +40,13 @@ object PokenavSignalManager {
             currentSignal = queue.removeFirst()
             isFlickering = true
             timer.reset(currentSignal!!.enabledStateDuration)
+            shakeTimer.reset(currentSignal!!.duration)
+            return
         }
 
         currentSignal ?: return
+
+        shakeTimer.tick(delta)
 
         if (!timer.isOver()) {
             timer.tick(delta)
@@ -79,7 +83,7 @@ object PokenavSignalManager {
         Vector3f(
             0f,
             0f,
-            ROTATION_AMPLITUDE * sin(timer.getProgress() * PI.toFloat() / 2 * 1)
+            SHAKE_AMPLITUDE * sin(shakeTimer.getProgress() * PI.toFloat() / 2 * (BASE_SHAKE_FREQUENCY * currentSignal!!.duration / BASE_SHAKE_DURATION))
         )
     )
 
@@ -90,13 +94,14 @@ object PokenavSignalManager {
     }
 
     @JvmStatic
-    fun isFittingContext(displayContext: ItemDisplayContext) = !NON_INVENTORY_DISPLAY_CONTEXTS.contains(displayContext)
+    fun isFittingContext(displayContext: ItemDisplayContext) = FITTING_DISPLAY_CONTEXTS.contains(displayContext)
 
     data class Signal(
         val amount: Int,
         val enabledStateDuration: Float,
         val disabledStateDuration: Float
     ) {
+        val duration = amount * (enabledStateDuration + disabledStateDuration) - disabledStateDuration
         internal var flickersLeft = amount
     }
 }
