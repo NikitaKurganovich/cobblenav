@@ -1,6 +1,7 @@
 package com.metacontent.cobblenav.mixin;
 
 import com.metacontent.cobblenav.client.gui.PokenavSignalManager;
+import com.metacontent.cobblenav.item.ConditionalModelItem;
 import com.metacontent.cobblenav.item.Pokenav;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.ItemModelShaper;
@@ -8,6 +9,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -36,13 +38,11 @@ public abstract class ItemRendererMixin {
 
     @ModifyVariable(method = "render", at = @At("HEAD"), argsOnly = true)
     public BakedModel flicker(BakedModel bakedModel, ItemStack stack, ItemDisplayContext renderMode) {
-        if (stack.getItem() instanceof Pokenav pokenav) {
-            if (!PokenavSignalManager.isFittingContext(renderMode)) return bakedModel;
-            if (PokenavSignalManager.isFlickering()) {
-                return itemModelShaper.getModelManager().getModel(ModelResourceLocation.inventory(pokenav.getFlickeringModel()));
-            }
+        if (stack.getItem() instanceof ConditionalModelItem item) {
+            ResourceLocation modelId = item.getModel(stack, renderMode);
+            if (modelId == null) return bakedModel;
+            return itemModelShaper.getModelManager().getModel(ModelResourceLocation.inventory(modelId));
         }
-
         return bakedModel;
     }
 }
