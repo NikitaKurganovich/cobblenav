@@ -8,7 +8,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -19,8 +18,9 @@ class Pokefinder(color: String) : ConditionalModelItem(Properties().stacksTo(1))
         const val TRANSLATION_KEY = "item.cobblenav.pokefinder_item"
     }
 
-    val baseModel = cobblenavResource(BASE_REGISTRY_KEY + color)
+    val baseModel = cobblenavResource("$BASE_REGISTRY_KEY$color")
     val inHandModel = cobblenavResource("model/$BASE_REGISTRY_KEY$color")
+    val openedInHandModel = cobblenavResource("model/open/$BASE_REGISTRY_KEY$color")
 
     override fun use(
         level: Level,
@@ -41,6 +41,9 @@ class Pokefinder(color: String) : ConditionalModelItem(Properties().stacksTo(1))
         return if (displayContext.isGui()) {
             baseModel
         } else {
+            if (Minecraft.getInstance().screen is PokefinderScreen && displayContext.firstPerson()) {
+                return openedInHandModel
+            }
             inHandModel
         }
     }

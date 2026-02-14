@@ -106,6 +106,7 @@ object CobblenavItems : RegistryProvider<Registry<Item>, ResourceKey<Registry<It
         }
         pokefinderItems.forEach {
             consumer(it.inHandModel)
+            consumer(it.openedInHandModel)
         }
         consumer(Fishingnav.IN_HAND_MODEL)
         consumer(Fishingnav.OPENED_IN_HAND_MODEL)
