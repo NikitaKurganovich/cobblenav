@@ -57,7 +57,7 @@ object PokenavSignalManager {
     }
 
     @JvmStatic
-    fun isFlickering() = currentSignal != null && isFlickering
+    fun isFlickering() = hasSignal() && isFlickering
 
     @JvmStatic
     fun hasSignal() = currentSignal != null
