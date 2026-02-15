@@ -77,7 +77,7 @@ class BasicHerdSpawnResultRenderer: BasicSpawnResultRenderer() {
 
 open class FishingSpawnResultRenderer : PokemonSpawnResultRenderer() {
     companion object {
-        val WAVES = gui("biome_platforms/fishing")
+        val BUBBLES = gui("fishing/bubbles")
     }
 
     override val rotation = Vector3f(0f, 270f, 0f)
@@ -87,7 +87,7 @@ open class FishingSpawnResultRenderer : PokemonSpawnResultRenderer() {
     override fun render(pokemon: RenderablePokemon, poseStack: PoseStack, x: Float, y: Float, z: Float, delta: Float) {
         blitk(
             matrixStack = poseStack,
-            texture = WAVES,
+            texture = BUBBLES,
             x = x,
             y = y,
             width = SpawnDataWidget.WIDTH,
