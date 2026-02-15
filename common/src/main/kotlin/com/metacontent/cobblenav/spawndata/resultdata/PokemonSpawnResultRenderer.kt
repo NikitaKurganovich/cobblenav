@@ -9,6 +9,8 @@ import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
 import com.metacontent.cobblenav.Cobblenav
 import com.metacontent.cobblenav.client.CobblenavClient
 import com.metacontent.cobblenav.client.gui.util.drawPokemon
+import com.metacontent.cobblenav.client.gui.util.gui
+import com.metacontent.cobblenav.client.gui.widget.spawndata.SpawnDataWidget
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
@@ -74,6 +76,10 @@ class BasicHerdSpawnResultRenderer: BasicSpawnResultRenderer() {
 }
 
 open class FishingSpawnResultRenderer : PokemonSpawnResultRenderer() {
+    companion object {
+        val WAVES = gui("biome_platforms/fishing")
+    }
+
     override val rotation = Vector3f(0f, 270f, 0f)
     override val scale = 15f
     override val pose = PoseType.SWIM
@@ -81,11 +87,11 @@ open class FishingSpawnResultRenderer : PokemonSpawnResultRenderer() {
     override fun render(pokemon: RenderablePokemon, poseStack: PoseStack, x: Float, y: Float, z: Float, delta: Float) {
         blitk(
             matrixStack = poseStack,
-            texture = null,
+            texture = WAVES,
             x = x,
             y = y,
-            width = 1,
-            height = 1
+            width = SpawnDataWidget.WIDTH,
+            height = SpawnDataWidget.HEIGHT
         )
         super.render(pokemon, poseStack, x, y, z, delta)
     }
