@@ -1,6 +1,5 @@
 package com.metacontent.cobblenav.spawndata.resultdata
 
-import com.cobblemon.mod.common.api.gui.blitk
 import com.cobblemon.mod.common.api.text.red
 import com.cobblemon.mod.common.client.render.models.blockbench.FloatingState
 import com.cobblemon.mod.common.entity.PoseType
@@ -9,8 +8,6 @@ import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
 import com.metacontent.cobblenav.Cobblenav
 import com.metacontent.cobblenav.client.CobblenavClient
 import com.metacontent.cobblenav.client.gui.util.drawPokemon
-import com.metacontent.cobblenav.client.gui.util.gui
-import com.metacontent.cobblenav.client.gui.widget.spawndata.SpawnDataWidget
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
@@ -71,30 +68,15 @@ open class BasicSpawnResultRenderer : PokemonSpawnResultRenderer() {
     override fun getHerdRenderer() = BasicHerdSpawnResultRenderer()
 }
 
-class BasicHerdSpawnResultRenderer: BasicSpawnResultRenderer() {
+class BasicHerdSpawnResultRenderer : BasicSpawnResultRenderer() {
     override val scale = 10f
 }
 
 open class FishingSpawnResultRenderer : PokemonSpawnResultRenderer() {
-    companion object {
-        val BUBBLES = gui("fishing/bubbles")
-    }
 
     override val rotation = Vector3f(0f, 270f, 0f)
     override val scale = 15f
     override val pose = PoseType.SWIM
-
-    override fun render(pokemon: RenderablePokemon, poseStack: PoseStack, x: Float, y: Float, z: Float, delta: Float) {
-        blitk(
-            matrixStack = poseStack,
-            texture = BUBBLES,
-            x = x,
-            y = y,
-            width = SpawnDataWidget.WIDTH,
-            height = SpawnDataWidget.HEIGHT
-        )
-        super.render(pokemon, poseStack, x, y, z, delta)
-    }
 
     override fun shouldRenderPlatform() = false
 
