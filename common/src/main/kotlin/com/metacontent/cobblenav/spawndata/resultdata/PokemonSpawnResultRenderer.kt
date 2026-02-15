@@ -1,5 +1,6 @@
 package com.metacontent.cobblenav.spawndata.resultdata
 
+import com.cobblemon.mod.common.api.gui.blitk
 import com.cobblemon.mod.common.api.text.red
 import com.cobblemon.mod.common.client.render.models.blockbench.FloatingState
 import com.cobblemon.mod.common.entity.PoseType
@@ -76,6 +77,18 @@ open class FishingSpawnResultRenderer : PokemonSpawnResultRenderer() {
     override val rotation = Vector3f(0f, 270f, 0f)
     override val scale = 15f
     override val pose = PoseType.SWIM
+
+    override fun render(pokemon: RenderablePokemon, poseStack: PoseStack, x: Float, y: Float, z: Float, delta: Float) {
+        blitk(
+            matrixStack = poseStack,
+            texture = null,
+            x = x,
+            y = y,
+            width = 1,
+            height = 1
+        )
+        super.render(pokemon, poseStack, x, y, z, delta)
+    }
 
     override fun shouldRenderPlatform() = false
 
