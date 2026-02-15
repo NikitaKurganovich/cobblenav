@@ -141,7 +141,7 @@ object SpawnDataHelper {
     ): SpawnData? {
         val result = SpawnResultData.fromDetail(detail, player) ?: return null
 
-        val builder = BiomePlatformContext.Builder()
+        val builder = if (result.shouldRenderPlatform()) BiomePlatformContext.Builder() else null
         val conditions = mutableListOf<ConditionData>()
         val blockConditions = mutableSetOf<ResourceLocation>()
         val anticonditions = mutableListOf<ConditionData>()
@@ -163,7 +163,7 @@ object SpawnDataHelper {
             conditions += condition
             anticonditions += condition
         }
-        val platformId = BiomePlatforms.firstFitting(builder.build())
+        val platformId = builder?.build()?.let { BiomePlatforms.firstFitting(it) }
 
         return SpawnData(
             id = if (!result.isUnknown() || !Cobblenav.config.hideUnknownSpawns) detail.id else "???",
@@ -180,13 +180,19 @@ object SpawnDataHelper {
     }
 
     fun onInit() {
-//        CobblenavEvents.POKEMON_ENCOUNTERED.subscribe { (pokemon, player) ->
-//            player?.catalogueDetailId(pokemon)
-//        }
+        CobblenavEvents.POKEMON_ENCOUNTERED.subscribe { (pokemon, player) ->
+            player?.catalogueDetailId(pokemon)
+        }
 
         CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe { event ->
             event.spawnablePosition.cause.entity?.let {
                 if (it is ServerPlayer) it.catalogueDetailId(event.entity.pokemon)
+            }
+        }
+
+        CobblemonEvents.BOBBER_SPAWN_POKEMON_POST.subscribe { (bobber, action, stack, pokemonEntity) ->
+            action.spawnablePosition.cause.entity?.let {
+                if (it is ServerPlayer) it.catalogueDetailId(pokemonEntity.pokemon)
             }
         }
     }

@@ -68,11 +68,12 @@ open class BasicSpawnResultRenderer : PokemonSpawnResultRenderer() {
     override fun getHerdRenderer() = BasicHerdSpawnResultRenderer()
 }
 
-class BasicHerdSpawnResultRenderer: BasicSpawnResultRenderer() {
+class BasicHerdSpawnResultRenderer : BasicSpawnResultRenderer() {
     override val scale = 10f
 }
 
 open class FishingSpawnResultRenderer : PokemonSpawnResultRenderer() {
+
     override val rotation = Vector3f(0f, 270f, 0f)
     override val scale = 15f
     override val pose = PoseType.SWIM
