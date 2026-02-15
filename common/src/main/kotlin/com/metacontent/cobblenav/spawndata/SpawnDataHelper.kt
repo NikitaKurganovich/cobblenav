@@ -180,13 +180,19 @@ object SpawnDataHelper {
     }
 
     fun onInit() {
-//        CobblenavEvents.POKEMON_ENCOUNTERED.subscribe { (pokemon, player) ->
-//            player?.catalogueDetailId(pokemon)
-//        }
+        CobblenavEvents.POKEMON_ENCOUNTERED.subscribe { (pokemon, player) ->
+            player?.catalogueDetailId(pokemon)
+        }
 
         CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe { event ->
             event.spawnablePosition.cause.entity?.let {
                 if (it is ServerPlayer) it.catalogueDetailId(event.entity.pokemon)
+            }
+        }
+
+        CobblemonEvents.BOBBER_SPAWN_POKEMON_POST.subscribe { (bobber, action, stack, pokemonEntity) ->
+            action.spawnablePosition.cause.entity?.let {
+                if (it is ServerPlayer) it.catalogueDetailId(pokemonEntity.pokemon)
             }
         }
     }
