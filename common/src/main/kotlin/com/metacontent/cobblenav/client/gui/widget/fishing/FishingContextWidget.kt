@@ -8,7 +8,9 @@ import com.cobblemon.mod.common.entity.PoseType
 import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
 import com.metacontent.cobblenav.api.fishingcontext.CloudRepository
 import com.metacontent.cobblenav.client.CobblenavClient
+import com.metacontent.cobblenav.client.gui.util.RGB
 import com.metacontent.cobblenav.client.gui.util.cobblenavScissor
+import com.metacontent.cobblenav.client.gui.util.dayCycleColor
 import com.metacontent.cobblenav.client.gui.util.drawPokemon
 import com.metacontent.cobblenav.client.gui.util.gui
 import com.metacontent.cobblenav.client.gui.util.pushAndPop
@@ -45,6 +47,8 @@ class FishingContextWidget(
         const val MAX_CLOUD_OPACITY = 0.95f
         const val MAX_STARS_OPACITY = 1f
         const val WINGULL_CHANCE = 6
+        private val DAY_COLOR = RGB(115, 215, 255)
+        private val NIGHT_COLOR = RGB(2, 1, 39)
         val SUN = gui("fishing/sun")
         val MOON = gui("fishing/moon")
         val HOOK = gui("fishing/hook")
@@ -56,6 +60,8 @@ class FishingContextWidget(
     private val centerY
         get() = y + height
 
+    private val color: Int
+        get() = dayCycleColor(level?.dayTime ?: 0L, DAY_COLOR, NIGHT_COLOR).toColor()
     private val cloudTextures = CloudRepository.clouds.toList()
     private val clouds = mutableListOf<Cloud>()
     private val xRange = -CLOUD_WIDTH..width
@@ -94,6 +100,14 @@ class FishingContextWidget(
             y1 = y,
             x2 = x + width,
             y2 = y + height
+        )
+
+        guiGraphics.fill(
+            x,
+            y,
+            x + width,
+            y + height,
+            color
         )
 
         blitk(

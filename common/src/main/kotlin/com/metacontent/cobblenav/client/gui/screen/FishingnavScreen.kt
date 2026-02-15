@@ -42,8 +42,6 @@ class FishingnavScreen(
         const val BUTTON_WIDTH = 15
         const val BUTTON_HEIGHT = 16
         const val BUTTON_GAP = 14
-        private val DAY_COLOR = RGB(115, 215, 255)
-        private val NIGHT_COLOR = RGB(2, 1, 39)
         val PANEL = gui("fishing/panel")
         val DEPTH = gui("fishing/depth_symbol")
         val SWITCH_OFF = gui("radialmenu/switch_off")
@@ -52,8 +50,9 @@ class FishingnavScreen(
         val REFRESH = gui("button/refresh_button")
     }
 
+    private var _color: Int? = null
     override val color: Int
-        get() = dayCycleColor(player?.clientLevel?.dayTime ?: 0L, DAY_COLOR, NIGHT_COLOR).toColor()
+        get() = _color ?: 0
 
     var loading = false
     override var displayedData: List<SpawnData>? = null
@@ -147,7 +146,11 @@ class FishingnavScreen(
                 depthProgress = index / buckets.size.toFloat(),
                 bucket = bucket,
                 verticalPadding = 4f
-            )
+            ).also {
+                if (index == buckets.size - 1) {
+                    _color = it.color.toColor()
+                }
+            }
         }.also {
             fishingTable.add(it)
             baseTable.add(fishingTable)
