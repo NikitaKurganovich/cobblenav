@@ -47,7 +47,7 @@ class PokefinderOverlay : Gui(Minecraft.getInstance()) {
 
         val isRightHand = minecraft.player?.mainHandItem?.item is Pokefinder
         val scale =
-            minecraft.window.guiScaledWidth.toDouble() / minecraft.window.screenWidth.toDouble() * minecraft.window.guiScale * CobblenavClient.config.screenScale
+            minecraft.window.guiScaledWidth.toDouble() / minecraft.window.screenWidth.toDouble() * minecraft.window.guiScale / CobblenavClient.config.screenScale
         val scaledOffset = (offset / scale).toInt()
         val scaledWidth = (WIDTH / scale).toInt()
         val scaledHeight = (HEIGHT / scale).toInt()
@@ -78,7 +78,7 @@ class PokefinderOverlay : Gui(Minecraft.getInstance()) {
         } ?: listOf()
 
         entities.forEach {
-            val vec = player.position().vectorTo(it.position()).scale(RADAR_SCALE)
+            val vec = player.position().vectorTo(it.position()).scale(RADAR_SCALE / scale)
             val angle = Math.toRadians(180.0 - player.rotationVector.y)
             val posX = x + scaledWidth / 2 + 0.5 + vec.x * cos(angle) - vec.z * sin(angle)
             val posY = y + scaledHeight / 2 + 0.5 + vec.x * sin(angle) + vec.z * cos(angle)
