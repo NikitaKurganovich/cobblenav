@@ -30,7 +30,7 @@ object PokenavSignalManager {
     private var currentSignal: Signal? = null
     private val timer = Timer(0f)
     private val shakeTimer = Timer(0f)
-    private val waitTimer = Timer(WAIT_DURATION)
+    private val waitTimer = Timer(0f)
     private var isFlickering = false
 
     @JvmStatic
@@ -66,8 +66,8 @@ object PokenavSignalManager {
         isFlickering = !isFlickering
 
         if (currentSignal!!.flickersLeft == 0) {
+            waitTimer.reset(currentSignal!!.waitDuration)
             currentSignal = null
-            waitTimer.reset()
         }
     }
 
@@ -98,9 +98,10 @@ object PokenavSignalManager {
     }
 
     data class Signal(
-        val amount: Int,
+        val amount: Int = 1,
         val enabledStateDuration: Float,
-        val disabledStateDuration: Float,
+        val disabledStateDuration: Float = 0f,
+        val waitDuration: Float = WAIT_DURATION,
         val itemSelector: (ItemStack) -> Boolean
     ) {
         val duration = amount * (enabledStateDuration + disabledStateDuration) - disabledStateDuration
