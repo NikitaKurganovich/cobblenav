@@ -2,6 +2,8 @@ package com.metacontent.cobblenav.client.gui
 
 import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
 import com.metacontent.cobblenav.client.gui.util.Timer
+import com.metacontent.cobblenav.item.Pokefinder
+import com.metacontent.cobblenav.item.Pokenav
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.world.item.ItemStack
 import org.joml.Quaternionf
@@ -15,6 +17,13 @@ object PokenavSignalManager {
     const val BASE_SHAKE_FREQUENCY = 16f
     const val BASE_SHAKE_DURATION = 10f
     const val WAIT_DURATION = 10f
+
+    val SPAWN_CATALOGUED_SIGNAL = Signal(1, 10f, 0f) {
+        it.item is Pokenav
+    }
+    val POKEMON_APPEARED_SIGNAL = Signal(1, 5f, 0f) {
+        it.item is Pokefinder
+    }
 
     private val queue = ArrayDeque<Signal>()
 
