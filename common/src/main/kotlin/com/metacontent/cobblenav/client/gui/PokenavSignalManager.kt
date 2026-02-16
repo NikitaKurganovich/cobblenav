@@ -3,7 +3,7 @@ package com.metacontent.cobblenav.client.gui
 import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
 import com.metacontent.cobblenav.client.gui.util.Timer
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.world.item.ItemDisplayContext
+import net.minecraft.world.item.ItemStack
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import kotlin.math.PI
@@ -68,10 +68,10 @@ object PokenavSignalManager {
     }
 
     @JvmStatic
-    fun isFlickering() = hasSignal() && isFlickering
+    fun isFlickering(stack: ItemStack) = hasSignal(stack) && isFlickering
 
     @JvmStatic
-    fun hasSignal() = currentSignal != null
+    fun hasSignal(stack: ItemStack) = currentSignal != null && currentSignal!!.itemSelector(stack)
 
     @JvmStatic
     fun getRotation() = Quaternionf().fromEulerXYZDegrees(
@@ -91,7 +91,8 @@ object PokenavSignalManager {
     data class Signal(
         val amount: Int,
         val enabledStateDuration: Float,
-        val disabledStateDuration: Float
+        val disabledStateDuration: Float,
+        val itemSelector: (ItemStack) -> Boolean
     ) {
         val duration = amount * (enabledStateDuration + disabledStateDuration) - disabledStateDuration
         internal var flickersLeft = amount
