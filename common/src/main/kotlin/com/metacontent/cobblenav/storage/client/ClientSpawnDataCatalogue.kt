@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.util.readString
 import com.cobblemon.mod.common.util.writeString
 import com.metacontent.cobblenav.client.CobblenavClient
 import com.metacontent.cobblenav.client.gui.PokenavSignalManager
+import com.metacontent.cobblenav.item.Pokenav
 import com.metacontent.cobblenav.storage.AbstractSpawnDataCatalogue
 import com.metacontent.cobblenav.storage.CobblenavDataStoreTypes
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -14,7 +15,9 @@ class ClientSpawnDataCatalogue(
     spawnDetailIds: MutableSet<String> = mutableSetOf()
 ) : AbstractSpawnDataCatalogue(spawnDetailIds), ClientInstancedPlayerData {
     companion object {
-        val SIGNAL = PokenavSignalManager.Signal(1, 10f, 0f)
+        val SIGNAL = PokenavSignalManager.Signal(1, 10f, 0f) {
+            it.item is Pokenav
+        }
 
         fun decode(buffer: RegistryFriendlyByteBuf): SetClientPlayerDataPacket = SetClientPlayerDataPacket(
             type = CobblenavDataStoreTypes.SPAWN_DATA,
