@@ -18,10 +18,10 @@ object PokenavSignalManager {
     const val BASE_SHAKE_DURATION = 10f
     const val WAIT_DURATION = 10f
 
-    val SPAWN_CATALOGUED_SIGNAL = Signal(1, 10f, 0f) {
+    val SPAWN_CATALOGUED_SIGNAL = Signal(enabledStateDuration = 10f) {
         it.item is Pokenav
     }
-    val POKEMON_APPEARED_SIGNAL = Signal(1, 5f, 0f) {
+    val POKEMON_APPEARED_SIGNAL = Signal(enabledStateDuration = 5f, waitDuration = 0f) {
         it.item is Pokefinder
     }
 
