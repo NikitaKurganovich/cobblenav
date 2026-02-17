@@ -1,5 +1,6 @@
 package com.metacontent.cobblenav.client
 
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.cobblemon.mod.common.platform.events.PlatformEvents
 import com.metacontent.cobblenav.api.fishingcontext.CloudRepository
 import com.metacontent.cobblenav.api.platform.BiomePlatformRenderDataRepository
@@ -56,7 +57,8 @@ object CobblenavClient {
             }
         }
 
-        CobblenavEvents.POKEMON_APPEARED_ON_CLIENT.subscribe { entity ->
+        PlatformEvents.CLIENT_ENTITY_LOAD.subscribe { (entity, level) ->
+            if (entity !is PokemonEntity) return@subscribe
             PokenavSignalManager.add(POKEMON_APPEARED_SIGNAL.copy())
         }
     }
