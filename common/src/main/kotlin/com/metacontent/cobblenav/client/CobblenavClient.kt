@@ -5,6 +5,7 @@ import com.metacontent.cobblenav.api.fishingcontext.CloudRepository
 import com.metacontent.cobblenav.api.platform.BiomePlatformRenderDataRepository
 import com.metacontent.cobblenav.api.platform.DimensionPlateRepository
 import com.metacontent.cobblenav.client.gui.PokenavSignalManager
+import com.metacontent.cobblenav.client.gui.PokenavSignalManager.POKEMON_APPEARED_SIGNAL
 import com.metacontent.cobblenav.client.gui.overlay.PokefinderOverlay
 import com.metacontent.cobblenav.client.gui.overlay.TrackArrowOverlay
 import com.metacontent.cobblenav.client.settings.ClientSettingsDataManager
@@ -12,6 +13,7 @@ import com.metacontent.cobblenav.client.settings.PokefinderSettings
 import com.metacontent.cobblenav.client.settings.PokenavSettings
 import com.metacontent.cobblenav.config.ClientCobblenavConfig
 import com.metacontent.cobblenav.config.Config
+import com.metacontent.cobblenav.event.CobblenavEvents
 import com.metacontent.cobblenav.item.Pokefinder
 import com.metacontent.cobblenav.spawndata.collector.ClientCollectors
 import com.metacontent.cobblenav.storage.client.ClientSpawnDataCatalogue
@@ -52,6 +54,10 @@ object CobblenavClient {
             if (pokefinderSettings?.changed == true) {
                 settingsManager.save(pokefinderSettings!!)
             }
+        }
+
+        CobblenavEvents.POKEMON_APPEARED_ON_CLIENT.subscribe { entity ->
+            PokenavSignalManager.add(POKEMON_APPEARED_SIGNAL.copy())
         }
     }
 
