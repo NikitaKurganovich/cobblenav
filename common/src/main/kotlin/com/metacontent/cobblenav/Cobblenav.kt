@@ -55,12 +55,6 @@ object Cobblenav {
             CloseFishingnavPacket().sendToPlayer(event.player)
         }
 
-        CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe { event ->
-
-        }
-
-        PlatformEvents
-
         if (config.syncLabelsWithClient) {
             CobblemonEvents.DATA_SYNCHRONIZED.subscribe { player ->
                 LabelSyncPacket(PokemonSpecies.species.map { it.resourceIdentifier to it.labels }).sendToPlayer(player)

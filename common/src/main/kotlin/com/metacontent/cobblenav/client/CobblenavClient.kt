@@ -14,7 +14,6 @@ import com.metacontent.cobblenav.client.settings.PokefinderSettings
 import com.metacontent.cobblenav.client.settings.PokenavSettings
 import com.metacontent.cobblenav.config.ClientCobblenavConfig
 import com.metacontent.cobblenav.config.Config
-import com.metacontent.cobblenav.event.CobblenavEvents
 import com.metacontent.cobblenav.item.Pokefinder
 import com.metacontent.cobblenav.spawndata.collector.ClientCollectors
 import com.metacontent.cobblenav.storage.client.ClientSpawnDataCatalogue
@@ -57,7 +56,7 @@ object CobblenavClient {
             }
         }
 
-        PlatformEvents.CLIENT_ENTITY_LOAD.subscribe { (entity, level) ->
+        PlatformEvents.CLIENT_ENTITY_LOAD.subscribe { (entity, _) ->
             if (entity !is PokemonEntity) return@subscribe
             PokenavSignalManager.add(POKEMON_APPEARED_SIGNAL.copy())
         }
