@@ -43,8 +43,11 @@ public abstract class ItemRendererMixin {
     private void shake(ItemStack itemStack, ItemDisplayContext itemDisplayContext, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BakedModel bakedModel, CallbackInfo ci) {
         if (!itemDisplayContext.firstPerson() && itemDisplayContext != ItemDisplayContext.GUI) return;
 
-        if (PokenavSignalManager.hasSignal(itemStack)) {
-            PokenavSignalManager.shake(poseStack);
+        if (itemStack.getItem() instanceof FlickeringItem) {
+            PokenavSignalManager.Signal signal = PokenavSignalManager.getSignal(itemStack);
+            if (signal != null) {
+                signal.shake(poseStack);
+            }
         }
 
         if (itemStack.getItem() instanceof Pokenav) {
@@ -70,7 +73,7 @@ public abstract class ItemRendererMixin {
 
         if (item instanceof OpenableItem openable && openable.isOpened(stack)) {
             modelId = openable.getOpenedModel(stack, renderMode);
-        } else if (item instanceof FlickeringItem flickering && PokenavSignalManager.isFlickering(stack)) {
+        } else if (item instanceof FlickeringItem flickering && PokenavSignalManager.hasSignal(stack)) {
             modelId = flickering.getFlickeringModel(stack, renderMode);
         }
 
