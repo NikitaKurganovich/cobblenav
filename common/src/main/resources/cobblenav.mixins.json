@@ -8,7 +8,9 @@
         "GrowingPlantBlockMixin",
         "GuiMixin",
         "ItemRendererMixin",
-        "ModelBakeryMixin"
+        "ModelBakeryMixin",
+        "PokemonEntityMixin",
+        "PokemonRendererMixin"
     ],
     "mixins": [
         "PokedexManagerMixin",
