@@ -1,6 +1,7 @@
 package com.metacontent.cobblenav.client.gui
 
 import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
+import com.cobblemon.mod.common.util.removeIf
 import com.metacontent.cobblenav.client.gui.util.Timer
 import com.metacontent.cobblenav.item.Pokefinder
 import com.metacontent.cobblenav.item.Pokenav
@@ -18,93 +19,59 @@ object PokenavSignalManager {
     const val BASE_SHAKE_DURATION = 10f
     const val WAIT_DURATION = 10f
 
-    val SPAWN_CATALOGUED_SIGNAL = Signal(enabledStateDuration = 10f) {
-        it.item is Pokenav
-    }
-    val POKEMON_APPEARED_SIGNAL = Signal(enabledStateDuration = 5f, waitDuration = 0f) {
-        it.item is Pokefinder
-    }
+    val SPAWN_CATALOGUED_SIGNAL = Signal(itemClass = Pokenav::class.java, duration = 10f)
+    val POKEMON_APPEARED_SIGNAL = Signal(itemClass = Pokefinder::class.java, duration = 5f)
 
-    private val queue = ArrayDeque<Signal>()
+    private val queues = mutableMapOf<Class<*>, ArrayDeque<Signal>>()
 
-    private var currentSignal: Signal? = null
-    private val timer = Timer(0f)
-    private val shakeTimer = Timer(0f)
-    private val waitTimer = Timer(0f)
-    private var isFlickering = false
+    private var currentSignals = mutableMapOf<Class<*>, Signal>()
 
     @JvmStatic
     fun tick(delta: Float) {
-        if (!waitTimer.isOver()) {
-            waitTimer.tick(delta)
-            return
-        }
+        currentSignals.removeIf { (_, signal) -> signal.isOver() }
+        currentSignals.forEach { (_, signal) -> signal.tick(delta) }
 
-        if (currentSignal == null && queue.isNotEmpty()) {
-            currentSignal = queue.removeFirst()
-            isFlickering = true
-            timer.reset(currentSignal!!.enabledStateDuration)
-            shakeTimer.reset(currentSignal!!.duration)
-            return
-        }
-
-        currentSignal ?: return
-
-        shakeTimer.tick(delta)
-
-        if (!timer.isOver()) {
-            timer.tick(delta)
-            return
-        }
-
-        val updatedTime = if (isFlickering) {
-            currentSignal!!.disabledStateDuration.also { currentSignal!!.flickersLeft-- }
-        } else {
-            currentSignal!!.enabledStateDuration
-        }
-        timer.reset(updatedTime)
-        isFlickering = !isFlickering
-
-        if (currentSignal!!.flickersLeft == 0) {
-            waitTimer.reset(currentSignal!!.waitDuration)
-            currentSignal = null
+        queues.forEach { (itemClass, queue) ->
+            if (queue.isNotEmpty() && !currentSignals.contains(itemClass)) {
+                currentSignals[itemClass] = queue.removeFirst()
+            }
         }
     }
 
-    @JvmStatic
     fun add(signal: Signal) {
-        queue.addLast(signal)
+        queues.getOrPut(signal.itemClass) { ArrayDeque() }.add(signal)
     }
 
     @JvmStatic
-    fun isFlickering(stack: ItemStack) = hasSignal(stack) && isFlickering
+    fun hasSignal(stack: ItemStack) = currentSignals[stack.item::class.java] != null
 
     @JvmStatic
-    fun hasSignal(stack: ItemStack) = currentSignal != null && currentSignal!!.itemSelector(stack)
-
-    @JvmStatic
-    fun getRotation() = Quaternionf().fromEulerXYZDegrees(
-        Vector3f(
-            0f,
-            0f,
-            SHAKE_AMPLITUDE * sin(shakeTimer.getProgress() * PI.toFloat() / 2 * (BASE_SHAKE_FREQUENCY * currentSignal!!.duration / BASE_SHAKE_DURATION))
-        )
-    )
-
-    @JvmStatic
-    fun shake(poseStack: PoseStack) {
-        poseStack.scale(SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE)
-        poseStack.rotateAround(getRotation(), 0f, -0.25f, 0f)
-    }
+    fun getSignal(stack: ItemStack) = currentSignals[stack.item::class.java]
 
     data class Signal(
-        val amount: Int = 1,
-        val enabledStateDuration: Float,
-        val disabledStateDuration: Float = 0f,
-        val waitDuration: Float = WAIT_DURATION,
-        val itemSelector: (ItemStack) -> Boolean
+        val itemClass: Class<*>,
+        val duration: Float,
+        val waitDuration: Float = WAIT_DURATION
     ) {
-        val duration = amount * (enabledStateDuration + disabledStateDuration) - disabledStateDuration
-        internal var flickersLeft = amount
+        private val timer = Timer(duration)
+
+        private fun getRotation() = Quaternionf().fromEulerXYZDegrees(
+            Vector3f(
+                0f,
+                0f,
+                SHAKE_AMPLITUDE * sin(timer.getProgress() * PI.toFloat() / 2 * (BASE_SHAKE_FREQUENCY * duration / BASE_SHAKE_DURATION))
+            )
+        )
+
+        fun shake(poseStack: PoseStack) {
+            poseStack.scale(SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE, SIGNAL_ITEM_SCALE)
+            poseStack.rotateAround(getRotation(), 0f, -0.25f, 0f)
+        }
+
+        fun tick(delta: Float) {
+            timer.tick(delta)
+        }
+
+        fun isOver() = timer.isOver()
     }
 }
