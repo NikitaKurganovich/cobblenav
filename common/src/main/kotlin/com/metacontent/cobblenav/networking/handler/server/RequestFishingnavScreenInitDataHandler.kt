@@ -1,5 +1,6 @@
 package com.metacontent.cobblenav.networking.handler.server
 
+import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.fishing.PokeRods
 import com.cobblemon.mod.common.api.net.ServerNetworkPacketHandler
 import com.cobblemon.mod.common.entity.fishing.PokeRodFishingBobberEntity
@@ -13,6 +14,7 @@ import net.minecraft.world.item.ItemStack
 object RequestFishingnavScreenInitDataHandler : ServerNetworkPacketHandler<RequestFishingnavScreenInitDataPacket> {
     override fun handle(packet: RequestFishingnavScreenInitDataPacket, server: MinecraftServer, player: ServerPlayer) {
         server.execute {
+            val buckets = Cobblemon.bestSpawner.config.buckets.map { it.name }
             var pokeBall = ResourceLocation.withDefaultNamespace("air")
             var lineColor = ""
             var bait = ItemStack.EMPTY
@@ -22,7 +24,7 @@ object RequestFishingnavScreenInitDataHandler : ServerNetworkPacketHandler<Reque
                 bait = bobber.bobberBait
             }
 
-            FishingnavScreenInitDataPacket(pokeBall, lineColor, bait).sendToPlayer(player)
+            FishingnavScreenInitDataPacket(buckets, pokeBall, lineColor, bait).sendToPlayer(player)
         }
     }
 }

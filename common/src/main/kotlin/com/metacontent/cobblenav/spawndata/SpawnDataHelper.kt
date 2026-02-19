@@ -96,7 +96,7 @@ object SpawnDataHelper {
 
     fun checkFishingSpawns(
         player: ServerPlayer
-    ): Map<WeightedBucket, List<CheckedSpawnData>> {
+    ): Map<String, List<CheckedSpawnData>> {
         val bobber = player.fishing
         val rods = if (bobber is PokeRodFishingBobberEntity && bobber.rodStack != null) {
             listOf(bobber.rodStack!!)
@@ -134,12 +134,16 @@ object SpawnDataHelper {
         } else {
             spawner.influences
         }
-        val weightedBuckets = calculateWeightedBuckets(bucketWeights, influences)
+        val weightedBuckets = calculateWeightedBuckets(bucketWeights, influences).associate {
+            (name, chance) -> name to chance
+        }
 
         return bucketWeights.keys.associate { bucket ->
-            weightedBuckets.first { it.name == bucket.name } to spawner.selector.getProbabilities(spawner, bucket, spawnablePositions)
+            bucket.name to spawner.selector.getProbabilities(spawner, bucket, spawnablePositions)
                 .mapNotNull { (detail, chance) ->
-                    collect(detail, player)?.let { CheckedSpawnData(it, chance * pokemonChance) }
+                    collect(detail, player)?.let {
+                        CheckedSpawnData(it, chance * pokemonChance * (weightedBuckets[bucket.name] ?: 1f))
+                    }
                 }
         }
     }
