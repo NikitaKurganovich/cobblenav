@@ -1,21 +1,20 @@
 package com.metacontent.cobblenav.networking.packet.client
 
-import com.cobblemon.mod.common.util.readString
-import com.cobblemon.mod.common.util.writeString
 import com.metacontent.cobblenav.networking.packet.CobblenavNetworkPacket
 import com.metacontent.cobblenav.spawndata.CheckedSpawnData
+import com.metacontent.cobblenav.util.WeightedBucket
 import com.metacontent.cobblenav.util.cobblenavResource
 import net.minecraft.network.RegistryFriendlyByteBuf
 
 class FishingMapPacket(
-    val fishingMap: Map<String, List<CheckedSpawnData>>
+    val fishingMap: Map<WeightedBucket, List<CheckedSpawnData>>
 ) : CobblenavNetworkPacket<FishingMapPacket> {
     companion object {
         val ID = cobblenavResource("fishing_map")
         fun decode(buffer: RegistryFriendlyByteBuf) = FishingMapPacket(
             buffer.readMap(
                 { buf ->
-                    buf.readString()
+                    WeightedBucket.decode(buf as RegistryFriendlyByteBuf)
                 },
                 { buf ->
                     buf.readList {
@@ -32,7 +31,7 @@ class FishingMapPacket(
         buffer.writeMap(
             fishingMap,
             { buf, bucket ->
-                buf.writeString(bucket)
+                bucket.encode(buf as RegistryFriendlyByteBuf)
             },
             { buf, list ->
                 buf.writeCollection(list) { buf1, spawnData ->

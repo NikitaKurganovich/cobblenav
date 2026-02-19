@@ -30,7 +30,6 @@ class FishingnavScreen(
     os: PokenavOS
 ) : PokenavScreen(os, true, true, Component.literal("Fishing")), SpawnDataDisplayer {
     companion object {
-        const val POKEMON_CHANCE = 0.85f
         const val WEATHER_WIDGET_HEIGHT = 40
         const val BUCKET_VIEW_MIN_HEIGHT = 100
         const val PANEL_WIDTH = 20
@@ -210,9 +209,9 @@ class FishingnavScreen(
         RequestFishingMapPacket().sendToServer()
     }
 
-    fun receiveFishingMap(fishingMap: Map<String, List<CheckedSpawnData>>) {
-        fishingMap.forEach { (bucketName, spawnDatas) ->
-            bucketViews.find { it.bucket.name == bucketName }?.let { view ->
+    fun receiveFishingMap(fishingMap: Map<WeightedBucket, List<CheckedSpawnData>>) {
+        fishingMap.forEach { (bucket, spawnDatas) ->
+            bucketViews.find { it.bucket.name == bucket.name }?.let { view ->
                 view.add(
                     spawnDatas
                         .sortedWith { firstData, secondData ->
@@ -222,7 +221,7 @@ class FishingnavScreen(
                             )
                         }
                         .map {
-                            it.chanceMultiplier = view.bucket.chance * POKEMON_CHANCE
+                            it.chanceMultiplier = view.bucket.chance
                             ScrollableItemWidget(
                                 child = SpawnDataWidget(
                                     x = 0,

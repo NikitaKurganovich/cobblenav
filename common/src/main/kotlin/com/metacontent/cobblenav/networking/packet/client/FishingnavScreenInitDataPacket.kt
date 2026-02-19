@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 
 class FishingnavScreenInitDataPacket(
-    val buckets: List<WeightedBucket>,
     val pokeBall: ResourceLocation,
     val lineColor: String,
     val baitItem: ItemStack
@@ -21,7 +20,6 @@ class FishingnavScreenInitDataPacket(
     companion object {
         val ID = cobblenavResource("fishingnav_screen_init_data")
         fun decode(buffer: RegistryFriendlyByteBuf) = FishingnavScreenInitDataPacket(
-            buckets = buffer.readList { WeightedBucket.decode(buffer) },
             pokeBall = buffer.readResourceLocation(),
             lineColor = buffer.readString(),
             baitItem = buffer.readItemStack()
@@ -31,7 +29,6 @@ class FishingnavScreenInitDataPacket(
     override val id = ID
 
     override fun encode(buffer: RegistryFriendlyByteBuf) {
-        buffer.writeCollection(buckets) { buf, bucket -> bucket.encode(buf as RegistryFriendlyByteBuf) }
         buffer.writeResourceLocation(pokeBall)
         buffer.writeString(lineColor)
         buffer.writeItemStack(baitItem)
