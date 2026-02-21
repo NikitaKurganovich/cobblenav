@@ -1,3 +1,5 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         maven("https://maven.fabricmc.net/")
@@ -5,6 +7,8 @@ pluginManagement {
         maven("https://files.minecraftforge.net/maven/")
         gradlePluginPortal()
     }
+
+    includeBuild("gradle/build-logic")
 }
 
 rootProject.name = "cobblenav"

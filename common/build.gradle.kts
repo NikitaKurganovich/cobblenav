@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.cobblenav.convention.base)
+}
+
 architectury {
     common("fabric", "neoforge")
 }

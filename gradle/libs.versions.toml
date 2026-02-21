@@ -1,0 +1,46 @@
+[versions]
+architectury-loom = "1.10-SNAPSHOT"
+architectury-plugin = "3.4-SNAPSHOT"
+shadow = "8.1.1"
+kotlin = "2.1.0"
+
+# Minecraft and mod versions
+minecraft = "1.21.1"
+fabric-loader = "0.16.9"
+fabric-api = "0.105.0+1.21.1"
+neoforge = "21.1.51"
+kotlinforforge = "5.5.0"
+fabric-kotlin = "1.12.2+kotlin.2.0.20"
+cobblemon = "1.6.1+1.21.1"
+
+# Integration versions
+mal-neoforge = "occT2ebf"
+mal-fabric = "1.8.0"
+counter-neoforge = "1.6-neoforge-1.5.0"
+counter-fabric = "1.6-fabric-1.5.0"
+
+[libraries]
+architectury-loom = { module = "dev.architectury:loom", version.ref = "architectury-loom" }
+architectury-plugin = { module = "io.github.architectury:architectury-plugin", version.ref = "architectury-plugin" }
+shadow = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
+kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
+# Minecraft libraries
+minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
+kotlinforforge = { module = "thedarkcolour:kotlinforforge", version.ref = "kotlinforforge" }
+fabric-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric-kotlin" }
+cobblemon = { module = "com.cobblemon:cobblemon", version.ref = "cobblemon" }
+loom = { group = "dev.architectury", name = "architectury-loom", version.ref = "architectury-loom" }
+architectury = { group = "architectury-plugin", name = "architectury-plugin.gradle.plugin", version.ref = "architectury-plugin" }
+
+# Integration libraries
+mal-neoforge = { module = "maven.modrinth:modmenu", version.ref = "mal-neoforge" }
+mal-fabric = { module = "maven.modrinth:modmenu", version.ref = "mal-fabric" }
+counter-neoforge = { module = "com.mrcrayfish:controlling", version.ref = "counter-neoforge" }
+counter-fabric = { module = "com.mrcrayfish:controlling", version.ref = "counter-fabric" }
+
+[plugins]
+cobblenav-convention-base = { id = "cobblenav.base-convention" }
