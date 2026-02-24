@@ -44,7 +44,9 @@ repositories {
 dependencies {
     neoForge("net.neoforged:neoforge:$neoforge_version")
 
-    add("common", project(path = ":common", configuration = "namedElements")) { isTransitive = false }
+    add("common", project(path = ":common", configuration = "namedElements")) {
+        isTransitive = false
+    }
     add("shadowBundle", project(path = ":common", configuration = "transformProductionNeoForge"))
 
     modImplementation("com.cobblemon:neoforge:$cobblemon_version")
@@ -61,12 +63,12 @@ tasks {
         inputs.property("version", project.version)
 
         filesMatching("META-INF/neoforge.mods.toml") {
-           expand(mapOf("version" to project.version))
+            expand(mapOf("version" to project.version))
         }
     }
 
     shadowJar {
-    configurations = listOf(project.configurations.getByName("shadowBundle"))
+        configurations = listOf(project.configurations.getByName("shadowBundle"))
         archiveClassifier = "dev-shadow"
     }
 
