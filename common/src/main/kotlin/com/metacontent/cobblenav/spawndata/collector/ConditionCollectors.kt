@@ -2,25 +2,27 @@ package com.metacontent.cobblenav.spawndata.collector
 
 import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.spawning.condition.SpawningCondition
-import com.cobblemon.mod.common.api.spawning.context.AreaSpawningContext
-import com.cobblemon.mod.common.api.spawning.context.SpawningContext
+import com.cobblemon.mod.common.api.spawning.position.AreaSpawnablePosition
+import com.cobblemon.mod.common.api.spawning.position.SpawnablePosition
 import com.metacontent.cobblenav.Cobblenav
 import com.metacontent.cobblenav.api.platform.SpawnDataContext
 import com.metacontent.cobblenav.config.CobblenavConfig
-import com.metacontent.cobblenav.spawndata.collector.block.*
-import com.metacontent.cobblenav.spawndata.collector.general.*
-import com.metacontent.cobblenav.spawndata.collector.special.*
-import net.minecraft.network.chat.MutableComponent
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.server.level.ServerPlayer
 import com.metacontent.cobblenav.event.CobblenavEvents
 import com.metacontent.cobblenav.event.CustomCollectorRegistrar
-import com.metacontent.cobblenav.spawndata.collector.special.counter.CountCollector
-import com.metacontent.cobblenav.spawndata.collector.special.counter.StreakCollector
+import com.metacontent.cobblenav.spawndata.collector.ConditionCollectors.generalCollectors
+import com.metacontent.cobblenav.spawndata.collector.block.AreaTypeBlockCollector
+import com.metacontent.cobblenav.spawndata.collector.block.FishingBlockCollector
+import com.metacontent.cobblenav.spawndata.collector.block.GroundedTypeBlockCollector
+import com.metacontent.cobblenav.spawndata.collector.block.SeafloorTypeBlockCollector
+import com.metacontent.cobblenav.spawndata.collector.general.*
+import com.metacontent.cobblenav.spawndata.collector.special.*
 import com.metacontent.cobblenav.spawndata.collector.special.mythsandlegends.ItemsCollector
 import com.metacontent.cobblenav.spawndata.collector.special.mythsandlegends.KeyItemCollector
 import com.metacontent.cobblenav.spawndata.collector.special.mythsandlegends.PokemonCollector
 import com.metacontent.cobblenav.spawndata.collector.special.mythsandlegends.ZygardeCubeChargeCollector
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerPlayer
 
 /**
  * Registry of all [ConditionCollector]s and [BlockConditionCollector]s for [SpawnData].
@@ -65,7 +67,7 @@ object ConditionCollectors {
 
     fun collectConditions(
         condition: SpawningCondition<*>,
-        fittingContexts: List<SpawningContext>,
+        fittingContexts: List<SpawnablePosition>,
         player: ServerPlayer,
         builder: SpawnDataContext.Builder
     ): List<MutableComponent> {
@@ -75,7 +77,7 @@ object ConditionCollectors {
 
     fun collectBlockConditions(
         condition: SpawningCondition<*>,
-        contexts: List<AreaSpawningContext>
+        contexts: List<AreaSpawnablePosition>
     ): Set<ResourceLocation> {
         return getBlockCollectors(condition).flatMap { it.collect(condition, contexts) }.toSet()
     }
@@ -85,6 +87,7 @@ object ConditionCollectors {
         collectors.clear()
         blockCollectors.clear()
 
+        // General
         registerGeneral(BiomeCollector())
         registerGeneral(MoonPhaseCollector())
         registerGeneral(UnderOpenSkyCollector())
@@ -97,6 +100,7 @@ object ConditionCollectors {
         registerGeneral(StructureCollector())
         registerGeneral(SlimeChunkCollector())
 
+        // Special
         register(FluidSurfaceCollector())
         register(DepthSurfaceCollector())
         register(FluidSubmergedCollector())
@@ -106,17 +110,18 @@ object ConditionCollectors {
         register(RodCollector())
         register(RodTypeCollector())
 
-        if (Cobblenav.config.enableMythsAndLegendsIntegration) {
-            register(KeyItemCollector())
-            register(ItemsCollector())
-            register(PokemonCollector())
-            register(ZygardeCubeChargeCollector())
-        }
+        // Myths and Legends
+        register(KeyItemCollector())
+        register(ItemsCollector())
+        register(PokemonCollector())
+        register(ZygardeCubeChargeCollector())
 
+        // Counter
         val api = Cobblemon.implementation.modAPI
-        register(CountCollector(api))
-        register(StreakCollector(api))
+//        register(CountCollector(api))
+//        register(StreakCollector(api))
 
+        // Block
         register(AreaTypeBlockCollector())
         register(GroundedTypeBlockCollector())
         register(SeafloorTypeBlockCollector())

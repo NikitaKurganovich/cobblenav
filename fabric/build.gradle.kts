@@ -1,6 +1,5 @@
 plugins {
-    id("com.github.johnrengelman.shadow")
-    alias(libs.plugins.cobblenav.convention.base)
+    alias(libs.plugins.cobblenav.convention.common)
 }
 
 architectury {
@@ -8,17 +7,8 @@ architectury {
     fabric()
 }
 
-val bundle: Configuration by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-}
-
-loom {
-    mods.maybeCreate("main")
-    mods.named("main") {
-        sourceSet(project.sourceSets.main.get())
-        sourceSet(projects.common.dependencyProject.sourceSets.main.get())
-    }
+configurations {
+    getByName("developmentFabric").extendsFrom(common.get())
 }
 
 dependencies {
@@ -31,11 +21,7 @@ dependencies {
     modCompileOnly(libs.cobblemon.mal.fabric)
     modCompileOnly(libs.cobblemon.counter.fabric)
 
-    implementation(projects.common) {
-        targetConfiguration = "namedElements"
-        isTransitive = false
-    }
-    bundle(projects.common) {
+    shadowBundle(projects.common) {
         targetConfiguration = "transformProductionFabric"
         isTransitive = false
     }
@@ -46,19 +32,8 @@ tasks {
         inputs.property("version", project.version)
 
         filesMatching("fabric.mod.json") {
-            expand(
-                "version" to project.version
-            )
+            expand("version" to project.version)
         }
-    }
-
-    shadowJar {
-        configurations = listOf(bundle)
-        archiveClassifier = "dev-shadow"
-    }
-
-    remapJar {
-        inputFile.set(shadowJar.flatMap { it.archiveFile })
     }
 }
 
