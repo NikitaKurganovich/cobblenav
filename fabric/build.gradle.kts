@@ -1,7 +1,6 @@
 plugins {
     id("com.github.johnrengelman.shadow")
     alias(libs.plugins.cobblenav.convention.base)
-
 }
 
 architectury {
@@ -14,32 +13,32 @@ val bundle: Configuration by configurations.creating {
     isCanBeResolved = true
 }
 
-val fabric_loader_version: String by project
-val fabric_kotlin_version: String by project
-val fabric_api_version: String by project
-val cobblemon_version: String by project
-val mal_fabric_version: String by project
-val counter_fabric_version: String by project
-
 loom {
     mods.maybeCreate("main")
     mods.named("main") {
         sourceSet(project.sourceSets.main.get())
-        sourceSet(project(":common").sourceSets.main.get())
+        sourceSet(projects.common.dependencyProject.sourceSets.main.get())
     }
 }
 
 dependencies {
-    modImplementation("net.fabricmc:fabric-loader:$fabric_loader_version")
-    modImplementation("net.fabricmc:fabric-language-kotlin:$fabric_kotlin_version")
+    modImplementation(libs.fabric.loader)
+    modImplementation(libs.fabric.kotlin)
+    modImplementation(libs.fabric.api)
 
-    modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric_api_version")
-    modImplementation("com.cobblemon:fabric:$cobblemon_version")
-    modCompileOnly("maven.modrinth:cobblemon-myths-and-legends-sidemod:$mal_fabric_version")
-    modCompileOnly("maven.modrinth:cobblemon-counter:$counter_fabric_version")
+    modImplementation(libs.cobblemon.fabric)
 
-    implementation(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
-    bundle(project(path = ":common", configuration = "transformProductionFabric")){ isTransitive = false }
+    modCompileOnly(libs.cobblemon.mal.fabric)
+    modCompileOnly(libs.cobblemon.counter.fabric)
+
+    implementation(projects.common) {
+        targetConfiguration = "namedElements"
+        isTransitive = false
+    }
+    bundle(projects.common) {
+        targetConfiguration = "transformProductionFabric"
+        isTransitive = false
+    }
 }
 
 tasks {

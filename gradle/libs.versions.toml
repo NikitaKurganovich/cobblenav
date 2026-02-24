@@ -20,8 +20,6 @@ counter-neoforge = "1.6-neoforge-1.5.0"
 counter-fabric = "1.6-fabric-1.5.0"
 
 [libraries]
-architectury-loom = { module = "dev.architectury:loom", version.ref = "architectury-loom" }
-architectury-plugin = { module = "io.github.architectury:architectury-plugin", version.ref = "architectury-plugin" }
 shadow = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
 kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
@@ -30,17 +28,20 @@ minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
 neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
-kotlinforforge = { module = "thedarkcolour:kotlinforforge", version.ref = "kotlinforforge" }
 fabric-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric-kotlin" }
-cobblemon = { module = "com.cobblemon:cobblemon", version.ref = "cobblemon" }
 loom = { group = "dev.architectury", name = "architectury-loom", version.ref = "architectury-loom" }
 architectury = { group = "architectury-plugin", name = "architectury-plugin.gradle.plugin", version.ref = "architectury-plugin" }
 
-# Integration libraries
-mal-neoforge = { module = "maven.modrinth:modmenu", version.ref = "mal-neoforge" }
-mal-fabric = { module = "maven.modrinth:modmenu", version.ref = "mal-fabric" }
-counter-neoforge = { module = "com.mrcrayfish:controlling", version.ref = "counter-neoforge" }
-counter-fabric = { module = "com.mrcrayfish:controlling", version.ref = "counter-fabric" }
+cobblemon-common = { module = "com.cobblemon:mod", version.ref = "cobblemon" }
+cobblemon-fabric = { module = "com.cobblemon:fabric", version.ref = "cobblemon" }
+cobblemon-neoforge = { module = "com.cobblemon:neoforge", version.ref = "cobblemon" }
+kotlinforforge-neoforge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinforforge" }
+
+cobblemon-mal-fabric = { module = "maven.modrinth:cobblemon-myths-and-legends-sidemod", version.ref = "mal-fabric" }
+cobblemon-mal-neoforge = { module = "maven.modrinth:cobblemon-myths-and-legends-sidemod", version.ref = "mal-neoforge" }
+
+cobblemon-counter-fabric = { module = "maven.modrinth:cobblemon-counter", version.ref = "counter-fabric" }
+cobblemon-counter-neoforge = { module = "maven.modrinth:cobblemon-counter", version.ref = "counter-neoforge" }
 
 [plugins]
 cobblenav-convention-base = { id = "cobblenav.base-convention" }

@@ -6,17 +6,12 @@ architectury {
     common("fabric", "neoforge")
 }
 
-val fabric_loader_version: String by project
-val cobblemon_version: String by project
-val mal_fabric_version: String by project
-val counter_fabric_version: String by project
-
 dependencies {
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,
     // which get remapped to the correct annotations on each platform.
     // Do NOT use other classes from Fabric Loader.
-    modImplementation("net.fabricmc:fabric-loader:$fabric_loader_version")
-    modImplementation("com.cobblemon:mod:$cobblemon_version")
-    modCompileOnly("maven.modrinth:cobblemon-myths-and-legends-sidemod:$mal_fabric_version")
-    modCompileOnly("maven.modrinth:cobblemon-counter:$counter_fabric_version")
+    modImplementation(libs.fabric.loader)
+    modImplementation(libs.cobblemon.common)
+    modCompileOnly(libs.cobblemon.mal.fabric)
+    modCompileOnly(libs.cobblemon.counter.fabric)
 }

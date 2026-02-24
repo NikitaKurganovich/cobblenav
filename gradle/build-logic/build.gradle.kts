@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
     implementation(libs.kotlin)
 
     implementation(libs.shadow)

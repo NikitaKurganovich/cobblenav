@@ -1,3 +1,5 @@
+import internal.libs
+
 plugins {
     id("dev.architectury.loom")
     id("architectury-plugin")
@@ -5,7 +7,6 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 val archives_name: String by project
-val minecraft_version: String by project
 
 base {
     // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
@@ -34,7 +35,7 @@ loom {
 }
 
 dependencies {
-    minecraft("net.minecraft:minecraft:${minecraft_version}")
+    minecraft(libs.minecraft)
     mappings(loom.officialMojangMappings())
 }
 

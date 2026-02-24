@@ -7,27 +7,21 @@ architectury {
     platformSetupLoomIde()
     neoForge()
 }
-val neoforge_version: String by project
-val mal_neoforge_version: String by project
-val counter_neoforge_version: String by project
-val kotlinforforge_version: String by project
-val cobblemon_version: String by project
+
+val common: Configuration by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
+val bundle: Configuration by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
 
 configurations {
-    create("common") {
-        isCanBeResolved = true
-        isCanBeConsumed = false
-    }
-    getByName("compileClasspath").extendsFrom(configurations.getByName("common"))
-    getByName("runtimeClasspath").extendsFrom(configurations.getByName("common"))
-    getByName("developmentNeoForge").extendsFrom(configurations.getByName("common"))
-
-    // Files in this configuration will be bundled into your mod using the Shadow plugin.
-    // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
-    create("shadowBundle") {
-        isCanBeResolved = true
-        isCanBeConsumed = false
-    }
+    getByName("compileClasspath").extendsFrom(common)
+    getByName("runtimeClasspath").extendsFrom(common)
+    getByName("developmentNeoForge").extendsFrom(common)
 }
 
 repositories {
@@ -42,18 +36,22 @@ repositories {
 }
 
 dependencies {
-    neoForge("net.neoforged:neoforge:$neoforge_version")
+    neoForge(libs.neoforge)
 
-    add("common", project(path = ":common", configuration = "namedElements")) {
+    common(projects.common) {
+        targetConfiguration = "namedElements"
         isTransitive = false
     }
-    add("shadowBundle", project(path = ":common", configuration = "transformProductionNeoForge"))
+    bundle(projects.common) {
+        targetConfiguration = "transfromProductionNeoForge"
+    }
 
-    modImplementation("com.cobblemon:neoforge:$cobblemon_version")
-    modCompileOnly("maven.modrinth:cobblemon-myths-and-legends-sidemod:$mal_neoforge_version")
-    modCompileOnly("maven.modrinth:cobblemon-counter:$counter_neoforge_version")
 
-    implementation("thedarkcolour:kotlinforforge-neoforge:$kotlinforforge_version") {
+    modImplementation(libs.cobblemon.neoforge)
+    modCompileOnly(libs.cobblemon.mal.neoforge)
+    modCompileOnly(libs.cobblemon.counter.neoforge)
+
+    implementation(libs.kotlinforforge.neoforge) {
         exclude(group = "net.neoforged.fancymodloader", module = "loader")
     }
 }
@@ -68,7 +66,7 @@ tasks {
     }
 
     shadowJar {
-        configurations = listOf(project.configurations.getByName("shadowBundle"))
+        configurations = listOf(bundle)
         archiveClassifier = "dev-shadow"
     }
 
