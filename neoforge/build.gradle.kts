@@ -26,7 +26,7 @@ dependencies {
     neoForge(libs.neoforge)
 
     shadowBundle(projects.common) {
-        targetConfiguration = "transfromProductionNeoForge"
+        targetConfiguration = "transformProductionFabric"
     }
 
     modImplementation(libs.cobblemon.neoforge)
