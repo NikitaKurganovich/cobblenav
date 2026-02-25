@@ -9,8 +9,10 @@ import com.cobblemon.mod.common.pokemon.RenderablePokemon
 import com.cobblemon.mod.common.pokemon.feature.SeasonFeatureHandler
 import com.metacontent.cobblenav.Cobblenav
 import net.minecraft.core.BlockPos
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.server.level.ServerPlayer
 
 fun cobblenavResource(name: String, namespace: String = Cobblenav.ID): ResourceLocation {
     return ResourceLocation.fromNamespaceAndPath(namespace, name)

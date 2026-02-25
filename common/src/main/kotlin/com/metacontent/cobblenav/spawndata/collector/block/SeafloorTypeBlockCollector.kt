@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.api.spawning.condition.SeafloorTypeSpawningCondi
 import com.metacontent.cobblenav.spawndata.collector.BlockConditionCollector
 import com.metacontent.cobblenav.spawndata.collector.ConfigureableCollector
 import com.metacontent.cobblenav.util.ModDependency
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 
 class SeafloorTypeBlockCollector : BlockConditionCollector<SeafloorTypeSpawningCondition<*>>, ConfigureableCollector {
