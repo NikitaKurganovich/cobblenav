@@ -1,7 +1,6 @@
 package com.metacontent.cobblenav.client.gui.overlay
 
 import com.cobblemon.mod.common.api.gui.blitk
-import com.cobblemon.mod.common.client.render.drawScaledText
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
 import com.metacontent.cobblenav.client.CobblenavClient
@@ -48,7 +47,7 @@ class PokefinderOverlay : Gui(Minecraft.getInstance()) {
 
         val isRightHand = minecraft.player?.mainHandItem?.item is Pokefinder
         val scale =
-            minecraft.window.guiScaledWidth.toDouble() / minecraft.window.screenWidth.toDouble() * minecraft.window.guiScale
+            minecraft.window.guiScaledWidth.toDouble() / minecraft.window.screenWidth.toDouble() * minecraft.window.guiScale / CobblenavClient.config.screenScale
         val scaledOffset = (offset / scale).toInt()
         val scaledWidth = (WIDTH / scale).toInt()
         val scaledHeight = (HEIGHT / scale).toInt()
@@ -79,7 +78,7 @@ class PokefinderOverlay : Gui(Minecraft.getInstance()) {
         } ?: listOf()
 
         entities.forEach {
-            val vec = player.position().vectorTo(it.position()).scale(RADAR_SCALE)
+            val vec = player.position().vectorTo(it.position()).scale(RADAR_SCALE / scale)
             val angle = Math.toRadians(180.0 - player.rotationVector.y)
             val posX = x + scaledWidth / 2 + 0.5 + vec.x * cos(angle) - vec.z * sin(angle)
             val posY = y + scaledHeight / 2 + 0.5 + vec.x * sin(angle) + vec.z * cos(angle)
@@ -90,14 +89,6 @@ class PokefinderOverlay : Gui(Minecraft.getInstance()) {
                     -1, -1,
                     1, 1,
                     FastColor.ARGB32.color(255, 255, 255, 255)
-                )
-                drawScaledText(
-                    context = guiGraphics,
-                    text = it.pokemon.getDisplayName(),
-                    x = 0,
-                    y = 2,
-                    centered = true,
-                    scale = 0.4f
                 )
             }
         }

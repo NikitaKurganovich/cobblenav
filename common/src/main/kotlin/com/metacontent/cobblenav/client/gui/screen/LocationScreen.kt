@@ -4,12 +4,7 @@ import com.cobblemon.mod.common.api.gui.blitk
 import com.cobblemon.mod.common.client.render.drawScaledText
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.metacontent.cobblenav.client.CobblenavClient
-import com.metacontent.cobblenav.client.gui.util.Sorting
-import com.metacontent.cobblenav.client.gui.util.Timer
-import com.metacontent.cobblenav.client.gui.util.fillWithOutline
-import com.metacontent.cobblenav.client.gui.util.gui
-import com.metacontent.cobblenav.client.gui.util.pushAndPop
-import com.metacontent.cobblenav.client.gui.util.renderSpawnDataTooltip
+import com.metacontent.cobblenav.client.gui.util.*
 import com.metacontent.cobblenav.client.gui.widget.ContextMenuWidget
 import com.metacontent.cobblenav.client.gui.widget.StatusBarWidget
 import com.metacontent.cobblenav.client.gui.widget.button.CheckBox
@@ -19,15 +14,18 @@ import com.metacontent.cobblenav.client.gui.widget.layout.scrollable.ScrollableI
 import com.metacontent.cobblenav.client.gui.widget.layout.scrollable.ScrollableView
 import com.metacontent.cobblenav.client.gui.widget.location.BucketSelectorWidget
 import com.metacontent.cobblenav.client.gui.widget.location.LocationInfoWidget
-import com.metacontent.cobblenav.client.gui.widget.location.SpawnDataWidget
+import com.metacontent.cobblenav.client.gui.widget.spawndata.SpawnDataDetailWidget
+import com.metacontent.cobblenav.client.gui.widget.spawndata.SpawnDataWidget
 import com.metacontent.cobblenav.client.settings.PokenavPreferences
 import com.metacontent.cobblenav.networking.packet.server.RequestLocationScreenInitDataPacket
 import com.metacontent.cobblenav.networking.packet.server.RequestSpawnMapPacket
 import com.metacontent.cobblenav.os.PokenavOS
+import com.metacontent.cobblenav.spawndata.CheckedSpawnData
 import com.metacontent.cobblenav.spawndata.SpawnData
 import com.metacontent.cobblenav.util.WeightedBucket
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.util.FastColor
 import net.minecraft.world.phys.AABB
@@ -38,8 +36,9 @@ import kotlin.math.min
 class LocationScreen(
     os: PokenavOS,
     makeOpeningSound: Boolean = false,
-    animateOpening: Boolean = false
-) : PokenavScreen(os, makeOpeningSound, animateOpening, Component.literal("Location")), SpawnDataTooltipDisplayer {
+    animateOpening: Boolean = false,
+    val fixedAreaPoint: BlockPos? = null
+) : PokenavScreen(os, makeOpeningSound, animateOpening, Component.literal("Location")), SpawnDataDisplayer {
     companion object {
         val LOADING = gui("location/loading_animation")
         const val ANIMATION_SHEET_WIDTH = 144
@@ -68,14 +67,15 @@ class LocationScreen(
     var viewX = 0
     var viewY = 0
     override val color = FastColor.ARGB32.color(255, 63, 126, 101)
-    private val spawnDataMap = mutableMapOf<String, List<SpawnData>>()
-    lateinit var buckets: List<WeightedBucket>
+    private val spawnDataMap = mutableMapOf<String, List<CheckedSpawnData>>()
+    private val weightedBuckets = mutableMapOf<String, WeightedBucket>()
+    lateinit var buckets: List<String>
     var bucketIndex = -1
         set(value) {
             field = max(min(value, buckets.size - 1), 0)
             onBucketChange()
         }
-    var currentBucket: WeightedBucket
+    var currentBucket: String
         get() = buckets[bucketIndex]
         set(value) {
             bucketIndex = buckets.indexOf(value)
@@ -89,7 +89,10 @@ class LocationScreen(
     var loading = false
     private val timer = Timer(LOADING_LOOP_DURATION, true)
     private val frameAmount: Int = ANIMATION_SHEET_WIDTH / FRAME_WIDTH
-    override var hoveredWidget: SpawnDataWidget? = null
+    override val displayedData: List<SpawnData>
+        get() = tableView.items.map { it.child.spawnData.data }
+    override var hoveredData: CheckedSpawnData? = null
+    override var selectedData: SpawnData? = null
     private lateinit var tableView: TableView<ScrollableItemWidget<SpawnDataWidget>>
     private lateinit var scrollableView: ScrollableView
     private lateinit var bucketSelector: BucketSelectorWidget
@@ -97,6 +100,7 @@ class LocationScreen(
     private lateinit var refreshButton: IconButton
     private lateinit var checkBox: CheckBox
     private lateinit var supportContextMenu: ContextMenuWidget
+    private lateinit var spawnDataDetails: SpawnDataDetailWidget
 
     override fun initScreen() {
         viewX = screenX + VERTICAL_BORDER_DEPTH + 5
@@ -132,7 +136,6 @@ class LocationScreen(
             pHeight = BUTTON_HEIGHT,
             disabled = true,
             action = {
-                scrollableView.reset()
                 tableView.clear()
                 requestSpawnData()
             },
@@ -175,7 +178,8 @@ class LocationScreen(
             text = Component.translatable("gui.cobblenav.apply_bucket"),
             afterClick = {
                 tableView.applyToAll { child ->
-                    child.child.chanceMultiplier = if ((it as CheckBox).checked) currentBucket.chance else 1f
+                    child.child.spawnData.chanceMultiplier =
+                        if ((it as CheckBox).checked) weightedBuckets[currentBucket]?.chance ?: 1f else 1f
                 }
             },
             default = CobblenavClient.pokenavSettings?.preferences?.applyBucketChecked ?: false
@@ -199,6 +203,13 @@ class LocationScreen(
             }
         )
 
+        spawnDataDetails = SpawnDataDetailWidget(
+            displayer = this,
+            parentScreen = this,
+            x = screenX + VERTICAL_BORDER_DEPTH,
+            y = screenY + HORIZONTAL_BORDER_DEPTH
+        ).also { addUnblockableWidget(it) }
+
         IconButton(
             pX = viewX/*screenX + VERTICAL_BORDER_DEPTH + BACK_BUTTON_SIZE + BUTTON_SPACE*/,
             pY = viewY + VIEW_HEIGHT/*screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - BUTTON_HEIGHT*/,
@@ -212,7 +223,7 @@ class LocationScreen(
         ).also { addBlockableWidget(it) }
     }
 
-    fun receiveInitData(buckets: List<WeightedBucket>, biome: String) {
+    fun receiveInitData(buckets: List<String>, biome: String) {
         this.buckets = buckets
         this.bucketIndex = CobblenavClient.pokenavSettings?.preferences?.bucketIndex ?: 0
         bucketSelector = BucketSelectorWidget(
@@ -229,10 +240,20 @@ class LocationScreen(
 
         sorting = CobblenavClient.pokenavSettings?.preferences?.sorting ?: Sorting.ASCENDING
         sortButton.disabled = false
+
+        val newlyCatalogued = CobblenavClient.spawnDataCatalogue.newlyCataloguedAmount
+        if (newlyCatalogued > 0) {
+            notifications.add(Component.translatable("gui.cobblenav.notification.newly_catalogued", newlyCatalogued))
+            CobblenavClient.spawnDataCatalogue.newlyCataloguedAmount = 0
+        }
+        if (fixedAreaPoint != null) {
+            notifications.add(Component.translatable("gui.cobblenav.notification.pokesnack"))
+        }
     }
 
-    fun receiveSpawnData(spawnDataList: List<SpawnData>) {
-        this.spawnDataMap[currentBucket.name] = spawnDataList
+    fun receiveSpawnData(spawnDataList: List<CheckedSpawnData>, weightedBucket: WeightedBucket) {
+        spawnDataMap[currentBucket] = spawnDataList
+        weightedBuckets[currentBucket] = weightedBucket
         createSpawnDataWidgets(spawnDataList)
         loading = false
         refreshButton.disabled = false
@@ -277,20 +298,17 @@ class LocationScreen(
 
     override fun renderOnFrontLayer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         if (blockWidgets || minecraft?.screen != this) return
-        hoveredWidget?.let {
-            guiGraphics.renderSpawnDataTooltip(
-                spawnData = it.spawnData,
-                chanceMultiplier = it.chanceMultiplier,
-                mouseX = mouseX,
-                mouseY = mouseY,
-                x1 = viewX,
-                y1 = viewY,
-                x2 = viewX + VIEW_WIDTH,
-                y2 = viewY + VIEW_HEIGHT,
-                delta = delta
-            )
-        }
-        hoveredWidget = null
+        hoveredData?.renderTooltip(
+            guiGraphics = guiGraphics,
+            mouseX = mouseX,
+            mouseY = mouseY,
+            x1 = viewX,
+            y1 = viewY,
+            x2 = viewX + VIEW_WIDTH,
+            y2 = viewY + VIEW_HEIGHT,
+            delta = delta
+        )
+        hoveredData = null
     }
 
     private fun savePreferences() {
@@ -306,7 +324,7 @@ class LocationScreen(
     private fun requestSpawnData() {
         loading = true
         refreshButton.disabled = true
-        RequestSpawnMapPacket(currentBucket.name).sendToServer()
+        RequestSpawnMapPacket(currentBucket, fixedAreaPoint).sendToServer()
     }
 
     override fun onScreenChange() {
@@ -327,9 +345,8 @@ class LocationScreen(
     }
 
     private fun onBucketChange() {
-        scrollableView.reset()
         tableView.clear()
-        val spawnDataList = spawnDataMap[currentBucket.name]
+        val spawnDataList = spawnDataMap[currentBucket]
         if (spawnDataList == null) {
             requestSpawnData()
             return
@@ -339,15 +356,15 @@ class LocationScreen(
 
     private fun onSortingChange() {
         sortButton.texture = if (sorting == Sorting.ASCENDING) SORT_ASCENDING else SORT_DESCENDING
-        tableView.resort(sorting) { widget -> widget.child.spawnData.spawnChance }
+        tableView.resort(sorting) { widget -> widget.child.spawnData.chance }
     }
 
-    private fun createSpawnDataWidgets(spawnDataList: List<SpawnData>) {
+    private fun createSpawnDataWidgets(spawnDataList: List<CheckedSpawnData>) {
         val spawnDataWidgets = spawnDataList
             .sortedWith { firstData, secondData ->
                 compareValues(
-                    firstData.spawnChance,
-                    secondData.spawnChance
+                    firstData.chance,
+                    secondData.chance
                 ) * sorting.multiplier
             }
             .map {
@@ -355,10 +372,11 @@ class LocationScreen(
                     child = SpawnDataWidget(
                         x = 0,
                         y = 0,
-                        spawnData = it,
-                        displayer = this,
-                        onClick = { widget -> changeScreen(FinderScreen(widget.spawnData, os), true) },
-                        chanceMultiplier = if (checkBox.checked) currentBucket.chance else 1f
+                        spawnData = it.also { data ->
+                            data.chanceMultiplier =
+                                if (checkBox.checked) weightedBuckets[currentBucket]?.chance ?: 1f else 1f
+                        },
+                        displayer = this
                     ),
                     topEdge = screenY + HORIZONTAL_BORDER_DEPTH + 16,
                     bottomEdge = screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - 15
@@ -381,9 +399,11 @@ class LocationScreen(
             ).map { it.pokemon.form.showdownId() }.toHashSet()
         } ?: hashSetOf()
         tableView.applyToAll { item ->
-            item.child.isNearby = nearbyPokemon.contains(item.child.spawnData.renderable.form.showdownId())
+            item.child.isNearby = item.child.spawnData.data.result.containsResult(nearbyPokemon)
         }
     }
 
     override fun isBlockingTooltip() = blockWidgets
+
+    override fun selectedCanBeTracked() = selectedData?.result?.canBeTracked() == true
 }
